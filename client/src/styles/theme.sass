@@ -1,0 +1,178 @@
+@import 'colors'
+@import url('https://fonts.googleapis.com/css?family=Noto+Sans+TC:400,500,700,900|Open+Sans:400,500,700,900&display=swap')
+
+/* Fixing Material UI issues */
+.MuiFormHelperText-root
+    &.MuiFormHelperText-contained
+        &.Mui-error
+            position: absolute
+            bottom: -1.4rem
+*
+    font-family: 'Open Sans', sans-serif
+    font-family: 'Noto Sans TC', sans-serif
+    box-sizing: border-box
+
+body
+    background-color: #E4E4E4
+/* Text color */
+.txt-regal
+    color: $color-regal-blue
+.txt-red
+    color: $color-red
+.txt-orange
+    color: $color-orange
+.txt-cerulean
+    color: $color-cerulean
+.txt-lemon
+    color: $color-lemon
+
+.float-right
+    float: right
+.float-left
+    float: left
+.text-right
+    text-align: right
+.text-left
+    text-align: left
+.text-center
+    text-align: center
+
+
+/* Main Body */
+.main-container
+    min-height: 100vh
+    width: 100%
+    display: flex
+    flex-wrap: nowrap
+    .main-menu
+        background-color: $color-lemon
+        color: $color-regal-blue
+        transition: width 0.3s
+        width: 320px
+        overflow-x: hidden
+        padding: 0
+        box-shadow: 2px 0px 4px 0px $color-orange
+        z-index: 1000
+        .menu-item
+            width: 100%
+            white-space: nowrap
+            padding: 0 18px 0 18px
+            &.logo
+                height: 80px
+                box-shadow: 0px 1px 1px 0px $color-orange
+                padding: 0 10px 0 16px
+                .menu-collapse
+                    color: $color-regal-blue
+            &.profile
+                box-shadow: 0px 1px 1px 0px $color-orange
+                min-height: 80px
+                .nav-item
+                    color: $color-regal-blue
+                    text-decoration: unset
+                    &.nav-label
+                        margin-left: 15px
+                        opacity: 1
+                        transition: all 0.3s
+                        font-size: 20px
+            &.link
+                font-size: 16px
+                .expand-icon
+                    padding: 18px 0 7px 0
+                &:hover
+                    border-right: 5px solid $color-orange
+                    .expand-icon
+                        margin-right: -5px
+                .nav-item
+                    color: $color-regal-blue
+                    width: 100%
+                    text-decoration: unset
+                    .nav-icon
+                        padding-left: 6px
+                        padding-right: 6px
+                        line-height: 50px
+                        svg
+                            vertical-align: middle
+                    .nav-label
+                        line-height: 29px
+                        font-size: 16px
+                        vertical-align: middle
+                        transition: all 0.3s
+                        opacity: 1
+        &:not(.collapsed)
+            width: 80px
+            transition: all 0.3s
+            .menu-item
+                &.profile
+                    .nav-label
+                        transition: all 0.3s
+                        opacity: 0
+                &.link
+                    .expand-icon
+                        margin-left: -7px
+                    .nav-item
+                        .nav-label
+                            transition: all 0.3s
+                            opacity: 0
+                    &:hover
+                        .expand-icon
+                            margin-right: 0
+                            margin-left: -2px
+                        .nav-item
+                            .nav-icon
+                                margin-right: -5px
+                    
+    .main-footer
+        width: 100vw
+        position: fixed
+        padding: 20px
+        bottom: 0
+        right: 0
+        text-align: right
+        background: #FAFAFA
+        box-shadow: 0px -1px 5px 0px rgba(0,0,0,0.20)
+        z-index: 900
+        .copy-right
+            line-height: 20px
+            margin: 0
+            color: $color-regal-blue
+    .main-content
+        width: 100%
+        padding: 0 20px 80px 20px
+        .breadcrumbs
+            color: $color-regal-blue
+        .content-wrapper
+            min-height: calc(100vh - 140px)
+            max-height: calc(100vh - 140px)
+            .content-body
+                padding: 20px
+                .list-table-container
+                    padding-top: 30px
+
+.MuiOutlinedInput-multiline
+    padding: 0 !important
+.search-box
+    max-width: 400px
+    height: 36px
+    .form-input
+        border-radius: 360px
+        color: $color-regal-blue
+        input
+            line-height: 20px
+            padding: 8px 14px 8px 5px
+.form-item-container
+    margin-bottom: 30px
+    .form-input
+        padding: 10.5px 14px
+        .MuiSelect-outlined.MuiSelect-outlined
+            padding: 0
+    .form-multiline > div
+        padding: 0
+    .form-label
+        float: right
+        margin-right: 15px
+        line-height: 40px !important
+        &.required:after
+            content: " *"
+            color: $color-red
+.error
+    color: red !important
