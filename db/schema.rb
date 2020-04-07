@@ -41,7 +41,7 @@ ActiveRecord::Schema.define(version: 2020_03_22_163314) do
   end
 
   create_table "claims", force: :cascade do |t|
-    t.bigint "transition_id"
+    t.bigint "claim_transaction_id"
     t.string "uuid"
     t.string "invoice_number", null: false
     t.string "item_name", null: false
@@ -59,7 +59,7 @@ ActiveRecord::Schema.define(version: 2020_03_22_163314) do
     t.string "updated_by"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["transition_id"], name: "index_claims_on_transition_id"
+    t.index ["claim_transaction_id"], name: "index_claims_on_claim_transaction_id"
   end
 
   create_table "group_accesses", force: :cascade do |t|

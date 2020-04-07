@@ -26,6 +26,8 @@
     "lb_edit_accounts":"Update Account",
     "lb_new_transactions":"Create Transition",
     "lb_edit_transactions":"Update Transition",
+    "lb_new_claims":"Create Claim",
+    "lb_edit_claims":"Update Claim",
     "input_zh_name": "Chinese Name",
     "input_en_name": "English Name",
     "input_zh_surname": "Surname (zh)",

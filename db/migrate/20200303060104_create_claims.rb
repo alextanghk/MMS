@@ -1,7 +1,7 @@
 class CreateClaims < ActiveRecord::Migration[6.0]
   def change
     create_table :claims do |t|
-      t.references :transition, null: true
+      t.references :claim_transaction, null: true
       t.string :uuid
       t.string :invoice_number, null: false
       t.string :item_name, null: false

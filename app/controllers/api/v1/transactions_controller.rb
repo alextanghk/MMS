@@ -3,7 +3,7 @@ class Api::V1::TransactionsController < Api::V1::ApplicationController
     def list
         raise SecurityTransgression unless @current_user.can_do?("GET_TRANSACTION")
 
-        items = Transition.active
+        items = Transaction.active
         query = params.permit(:page,:size,:order,:sort,:keywords,:status,:created_from,:created_to)
         page = query[:page].present? ? query[:page] : 1
         size = query[:size].present? ? query[:size] : 25
@@ -27,7 +27,7 @@ class Api::V1::TransactionsController < Api::V1::ApplicationController
     def get
         raise SecurityTransgression unless @current_user.can_do?("GET_TRANSACTION")
         item_id = params[:item_id]
-        item = Transition.active.find(item_id.to_i)
+        item = Transaction.active.find(item_id.to_i)
         
         render json: {
             message: "success",
@@ -45,7 +45,7 @@ class Api::V1::TransactionsController < Api::V1::ApplicationController
         account_id = form[:account_id]
         account = Account.active.find(account_id.to_i)
         
-        item = Transition.new(form)
+        item = Transaction.new(form)
 
         raise SecurityTransgression unless @current_user.can_create?(item)
 
@@ -72,7 +72,7 @@ class Api::V1::TransactionsController < Api::V1::ApplicationController
 
     def update
         item_id = params[:item_id]
-        item = Transition.active.find(item_id.to_i)
+        item = Transaction.active.find(item_id.to_i)
         raise SecurityTransgression unless @current_user.can_update?(item)
         form = params.permit(:receipt, :account_id, :invoice_number, :item_name, :description, :transaction_date, :amount)
         account_id = form[:account_id]
@@ -110,7 +110,7 @@ class Api::V1::TransactionsController < Api::V1::ApplicationController
 
     def delete
         item_id = params[:item_id]
-        item = Transition.active.find(item_id.to_i)
+        item = Transaction.active.find(item_id.to_i)
         raise SecurityTransgression unless @current_user.can_delete?(item)
 
         item.is_deleted = true

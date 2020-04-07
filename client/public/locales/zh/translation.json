@@ -26,6 +26,8 @@
     "lb_edit_accounts":"編輯銀行帳戶",
     "lb_new_transactions":"新增交易紀錄",
     "lb_edit_transactions":"編輯交易紀錄",
+    "lb_new_claims":"新增報銷紀錄",
+    "lb_edit_claims":"編輯報銷紀錄",
     "input_zh_name": "中文名稱",
     "input_en_name": "英文名稱",
     "input_zh_surname": "姓氏 (中)",

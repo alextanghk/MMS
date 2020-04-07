@@ -157,7 +157,7 @@ class Api::V1::ClaimsController < Api::V1::ApplicationController
         end
 
         trans.save
-        item.transaction = trans
+        item.claim_transaction = trans
         item.status = "Approved"
         if !item.valid?
             render status:500, json: {
