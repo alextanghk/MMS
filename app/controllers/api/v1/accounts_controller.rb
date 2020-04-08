@@ -41,7 +41,7 @@ class Api::V1::AccountsController < Api::V1::ApplicationController
     end
 
     def create 
-        form = params.permit(:bank, :remark, :is_default)
+        form = params.permit(:bank,:bank_no, :remark, :is_default)
         item = Account.new(form)
 
         raise SecurityTransgression unless @current_user.can_create?(item)
@@ -71,7 +71,7 @@ class Api::V1::AccountsController < Api::V1::ApplicationController
         item_id = params[:item_id]
         item = Account.active.find(item_id.to_i)
         raise SecurityTransgression unless @current_user.can_update?(item)
-        form = params.permit(:bank, :remark, :is_default)
+        form = params.permit(:bank,:bank_no, :remark, :is_default)
         item.assign_attributes(form)
 
         if !item.valid?

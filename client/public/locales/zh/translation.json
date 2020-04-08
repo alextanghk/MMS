@@ -65,6 +65,7 @@
     "input_paid_by":"付款人",
     "input_receipt":"收據",
     "input_bank":"銀行名稱",
+    "input_bank_no":"帳戶號碼",
     "input_is_default":"預設",
     "input_emergency_contact":"緊急聯絡人",
     "input_emergency_relation":"聯絡人關系",

@@ -65,6 +65,7 @@
     "input_paid_by":"Paid By",
     "input_receipt":"Receipt",
     "input_bank":"Bank Name",
+    "input_bank_no":"Bank Number",
     "input_is_default":"Default",
     "input_emergency_contact":"Emergency Contact",
     "input_emergency_relation":"Contact Relation",

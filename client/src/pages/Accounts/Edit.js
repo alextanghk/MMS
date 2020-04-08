@@ -18,6 +18,7 @@ class EditAccount extends Component {
         this.state = {
             content: {
                 bank:"",
+                bank_no:"",
                 remark: "",
                 is_default: false
             },
@@ -212,6 +213,24 @@ class EditAccount extends Component {
                                             type="text"
                                             helperText={_.get(errors, "bank","")}
                                             required
+                                            inputProps={{
+                                                className:"form-input"
+                                            }}
+                                        />
+                                    </FormItemContainer>
+                                </Grid>
+                                <Grid item md={5} spacing={1}>
+                                    <FormItemContainer
+                                        label={ `${t('input_bank_no')}:` }
+                                    >
+                                        <TextField
+                                            name="bank_no"
+                                            variant="outlined"
+                                            fullWidth
+                                            value={ _.get(content,"bank_no","")}
+                                            onChange={this.handleOnChange}
+                                            type="text"
+                                            helperText={_.get(errors, "bank_no","")}
                                             inputProps={{
                                                 className:"form-input"
                                             }}

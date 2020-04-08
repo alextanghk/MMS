@@ -24,6 +24,7 @@ const Accounts = props => {
     
     const columns = [
         { key: "bank", label: "Bank" },
+        { key: "balance", label: "Balance" },
         { key: "remark", label: "Remark" },
         { key: "is_default", label: "Default", render: (row,text) => { return text ? "Y": "N"} },
         { key: "updated_at", label: "Last Updated", render: (record, text)=>{ return moment(text).format("YYYY-MM-DD HH:mm");}}

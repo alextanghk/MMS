@@ -686,7 +686,7 @@ class EditRegistration extends Component {
                                                 inputVariant="outlined"
                                                 onChange={ this.handleOnDateChange('dob') }
                                                 maxDate={new Date()}
-                                                format="MM-DD-YYYY"
+                                                format="MM/YYYY"
                                                 InputAdornmentProps={{position: "end"}}
                                                 className="datePicker"
                                                 inputProps={{

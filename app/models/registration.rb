@@ -95,17 +95,24 @@ class Registration < ApplicationRecord
     attachment.instance.uuid
   end
 
-  has_attached_file :proof, 
-    styles: { thumb: "100x100>" }, 
-    :storage => :fog,
-    fog_credentials: {
-        google_storage_access_key_id: ''ENV.fetch('GOOGLE_STORAGE_ID')'',
-        google_storage_secret_access_key: ENV.fetch('GOOGLE_STORAGE_SECRET'),
-        provider: 'Google' },
-    fog_directory: ENV.fetch('GOOGLE_STORAGE_SECRET'),
-    :path => "registry/:uuid/:style/:filename", # :path => ":rails_root/public/uploads/registry/:uuid/:style/:filename", 
-    :url => ENV["BASE_URL"]+"/uploads/registry/:uuid/:style/:filename"
-  
+  if Rails.env.production?
+    has_attached_file :proof, 
+      styles: { thumb: "100x100>" }, 
+      :storage => :fog,
+      fog_credentials: {
+        google_storage_access_key_id: ENV.fetch('GOOGLE_STORAGE_ID'),
+          google_storage_secret_access_key: ENV.fetch('GOOGLE_STORAGE_SECRET'),
+          provider: 'Google' },
+      fog_directory: ENV.fetch('GOOGLE_STORAGE_BUCKET'),
+      :path => "registry/:uuid/:style/:filename", # :path => ":rails_root/public/uploads/registry/:uuid/:style/:filename", 
+      :url => ENV["BASE_URL"]+"/uploads/registry/:uuid/:style/:filename"
+  else
+    has_attached_file :proof, 
+      styles: { thumb: "100x100>" }, 
+      :path => ":rails_root/public/uploads/registry/:uuid/:style/:filename", 
+      :url => ENV["BASE_URL"]+"/uploads/registry/:uuid/:style/:filename"
+  end
+    
   validates_attachment_content_type :proof, content_type: /\Aimage\/.*\z/
 
   before_create do
