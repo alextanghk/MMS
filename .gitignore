@@ -23,3 +23,10 @@
 
 /public/uploads/*
 !/public/uploads/.keep
+.fog
+/deploy/*
+!/deploy/.keep
+/config/environment.yml
+app.yaml
+
+/public/precache-manifest.*.js
