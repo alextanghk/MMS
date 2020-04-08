@@ -50,7 +50,17 @@ class Member < ApplicationRecord
         attachment.instance.uuid
     end
 
-    has_attached_file :profile, styles: { thumb: "100x100>" }, default_url: ENV["BASE_URL"]+"/images/missing.png", :path => ":rails_root/public/uploads/members/:uuid/:style/:filename", :url => ENV["BASE_URL"]+"/uploads/members/:uuid/:style/:filename"
+    has_attached_file :profile, 
+        styles: { thumb: "100x100>" }, 
+        :storage => :fog,
+        fog_credentials: {
+            google_storage_access_key_id: ''ENV.fetch('GOOGLE_STORAGE_ID')'',
+            google_storage_secret_access_key: ENV.fetch('GOOGLE_STORAGE_SECRET'),
+            provider: 'Google' },
+        fog_directory: ENV.fetch('GOOGLE_STORAGE_SECRET'),
+        :path => "members/:uuid/:style/:filename", # :path => ":rails_root/public/uploads/members/:uuid/:style/:filename", 
+        :url => ENV["BASE_URL"]+"/uploads/members/:uuid/:style/:filename"
+    
     validates_attachment_content_type :profile, content_type: /\Aimage\/.*\z/
 
     validates :subscription, acceptance: { message: "field_error_true_only"}

@@ -1,0 +1,32 @@
+### Please rename this file to environment.yml
+
+development:
+  SECRET_KEY: ''
+  BASE_URL: 'http://localhost:3000'
+  DATABASE_USERNAME: ''
+  DATABASE_PASSWORD: ''
+  DATABASE_HOST: ''
+  secret_key_base: <%= ENV["SECRET_KEY_BASE"] %>
+  GOOGLE_STORAGE_ID: ''
+  GOOGLE_STORAGE_SECRET: ''
+  GOOGLE_STORAGE_BUCKET: ''
+production:
+  SECRET_KEY: ''
+  BASE_URL: 'http://localhost:3000'
+  DATABASE_USERNAME: ''
+  DATABASE_PASSWORD: ''
+  DATABASE_HOST: ''
+  secret_key_base: <%= ENV["SECRET_KEY_BASE"] %>
+  GOOGLE_STORAGE_ID: ''
+  GOOGLE_STORAGE_SECRET: ''
+  GOOGLE_STORAGE_BUCKET: ''
+test:
+  SECRET_KEY: ''
+  BASE_URL: 'http://localhost:3000'
+  DATABASE_USERNAME: ''
+  DATABASE_PASSWORD: ''
+  DATABASE_HOST: ''
+  secret_key_base: <%= ENV["SECRET_KEY_BASE"] %>
+  GOOGLE_STORAGE_ID: ''
+  GOOGLE_STORAGE_SECRET: ''
+  GOOGLE_STORAGE_BUCKET: ''

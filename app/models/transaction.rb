@@ -11,8 +11,18 @@ class Transaction < ApplicationRecord
   validates :transaction_date, presence: { message: "field_error_required"}
   validates :amount, presence: { message: "field_error_required"}
 
-  has_attached_file :receipt, styles: { thumb: "100x100>" },:path => ":rails_root/public/uploads/transit/receipt/:uuid/:style/:filename", :url => ENV["BASE_URL"]+"/uploads/transit/receipt/:uuid/:style/:filename"
-    validates_attachment_content_type :receipt, content_type: /\Aimage\/.*\z/
+  has_attached_file :receipt, 
+    styles: { thumb: "100x100>" },
+    :storage => :fog,
+    fog_credentials: {
+        google_storage_access_key_id: ''ENV.fetch('GOOGLE_STORAGE_ID')'',
+        google_storage_secret_access_key: ENV.fetch('GOOGLE_STORAGE_SECRET'),
+        provider: 'Google' },
+    fog_directory: ENV.fetch('GOOGLE_STORAGE_SECRET'),
+    :path => "transit/receipt/:uuid/:style/:filename", # :path => ":rails_root/public/uploads/transit/receipt/:uuid/:style/:filename", 
+    :url => ENV["BASE_URL"]+"/uploads/transit/receipt/:uuid/:style/:filename"
+
+  validates_attachment_content_type :receipt, content_type: /\Aimage\/.*\z/
     
   before_create do
     self.uuid = loop do

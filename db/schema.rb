@@ -30,6 +30,8 @@ ActiveRecord::Schema.define(version: 2020_03_22_163314) do
 
   create_table "accounts", force: :cascade do |t|
     t.string "bank", null: false
+    t.string "bank_no"
+    t.decimal "balance", precision: 12, scale: 2
     t.text "remark"
     t.boolean "is_default", default: false
     t.boolean "is_actived", default: true
