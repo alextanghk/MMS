@@ -433,7 +433,6 @@ class EditTransition extends Component {
                                     </Grid>
                                     <Grid item md={5} spacing={1}>
                                         <FormItemContainer
-                                            required={content.paid}
                                             label={ `${t('input_payment_method')}:` }
                                         >
                                             <Select
@@ -442,7 +441,6 @@ class EditTransition extends Component {
                                                 variant="outlined"
                                                 fullWidth
                                                 error={ errors.payment_method }
-                                                required={content.paid}
                                                 onChange={this.handleOnChange}
                                                 inputProps={{
                                                     className:"form-input"
