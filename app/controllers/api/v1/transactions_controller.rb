@@ -41,7 +41,12 @@ class Api::V1::TransactionsController < Api::V1::ApplicationController
     end
 
     def create 
-        form = params.permit(:receipt, :account_id, :invoice_number, :item_name, :description, :transaction_date, :amount)
+        form = params.permit(
+            :receipt, :account_id, :invoice_number, 
+            :item_name, :description, :transaction_date, 
+            :amount, :payment_method, :provider, :item_type,
+            :approved_by, :approved_at
+        )
         account_id = form[:account_id]
         account = Account.active.find(account_id.to_i)
         
@@ -74,9 +79,18 @@ class Api::V1::TransactionsController < Api::V1::ApplicationController
         item_id = params[:item_id]
         item = Transaction.active.find(item_id.to_i)
         raise SecurityTransgression unless @current_user.can_update?(item)
-        form = params.permit(:receipt, :account_id, :invoice_number, :item_name, :description, :transaction_date, :amount)
-        account_id = form[:account_id]
-        account = Account.active.find(account_id.to_i)
+
+        form = params.permit(
+            :receipt, :account_id, :invoice_number, 
+            :item_name, :description, :transaction_date, 
+            :amount, :payment_method, :provider, :item_type,
+            :approved_by, :approved_at
+        )
+        if item.is_approved
+            form = params.permit(
+                :description, :payment_method
+            )
+        end
 
         item.assign_attributes(form)
         setting = params.permit(:delete_receipt)
@@ -102,6 +116,37 @@ class Api::V1::TransactionsController < Api::V1::ApplicationController
             data: ReturnFormat(item)
         }
         
+    rescue ActiveRecord::RecordNotFound => e
+        render json: { message: "data_not_found", error: "data_not_found" }, status: :not_found
+    rescue => e
+        render json: { message: "system_error", error: e.message }, status: :internal_server_error
+    end
+    
+    def approve
+        raise SecurityTransgression unless @current_user.can_do?("APPROVE_TRANSACTION")
+        item_id = params[:item_id]
+        item = Transaction.active.find(item_id.to_i)
+
+        if item.is_approved
+            render json: { message: "transaction_approved" , error: "transaction_approved" }, status: :internal_server_error
+            return
+        end
+        
+        item.is_approved = true
+        if !item.valid?
+            render status:500, json: {
+                message: "invalid",
+                error: item.errors.messages,
+                data: nil
+            }
+            return
+        end
+        item.save
+        render json: {
+            message: "success",
+            error: nil,
+            data: nil
+        }
     rescue ActiveRecord::RecordNotFound => e
         render json: { message: "data_not_found", error: "data_not_found" }, status: :not_found
     rescue => e

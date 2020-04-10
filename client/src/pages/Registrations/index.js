@@ -29,13 +29,13 @@ const Registrations = props => {
     })
     
     const columns = [
-        { key: "zh_surname", label: "Surame (ZH)" },
-        { key: "zh_first_name", label: "First Name (ZH)" },
-        { key: "en_surname", label: "Surame (EH)" },
-        { key: "en_first_name", label: "First Name (EN)" },
-        { key: "email", label: "Email" },
-        { key: "status", label: "Status" },
-        { key: "updated_at", label: "Last Updated", render: (record, text)=>{
+        { key: "zh_surname", label: t('input_zh_surname') },
+        { key: "zh_first_name", label: t('input_zh_first_name') },
+        { key: "en_surname", label: t('input_en_surname') },
+        { key: "en_first_name", label: t('input_en_first_name') },
+        { key: "email", label: t('input_email')  },
+        { key: "status", label: t('input_status') },
+        { key: "updated_at", label: t('lb_last_updated'), render: (record, text)=>{
             return moment(text).format("YYYY-MM-DD HH:mm");
         } }
     ];
@@ -77,7 +77,7 @@ const Registrations = props => {
                     <Grid container>
                         <Grid item xs={6}>
                             <SearchBox 
-                                placeholder="Search..."
+                                placeholder={ t('ph_search') }
                                 variant="outlined"
                                 onSearch={(value)=>{
                                     setFilter(value);
@@ -92,7 +92,7 @@ const Registrations = props => {
                                 className="float-right"
                                 href="/registrations/create"
                             >
-                                New
+                                {t('btn_new')}
                             </Button>
                         </Grid>
                         <Grid xs={12} className="list-table-container">

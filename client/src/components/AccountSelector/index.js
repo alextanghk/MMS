@@ -7,7 +7,7 @@ import Loader from '../../components/Loader';
 import Alert from '../../components/Alert';
 
 const AccountSelector = (props) => {
-    const { name, value, onChange, required, className="" } = props;
+    const { name, value, onChange, required, className="", disabled=false } = props;
     const [options, setOptions] = useState([]);
 
     const [paging, setPaging] = useState({
@@ -43,6 +43,7 @@ const AccountSelector = (props) => {
             MenuProps={{
                 onScroll:loadMoreItems
             }}
+            disabled={disabled}
         >
             <MenuItem value={null}></MenuItem>
             {

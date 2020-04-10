@@ -32,6 +32,9 @@
     "lb_edit_users":"編輯用戶",
     "lb_new_usergroups":"新增用戶群組",
     "lb_edit_usergroups":"編輯用戶群組",
+    "lb_last_updated":"最後更新",
+    "lb_action":"",
+    "input_profile":"相片",
     "input_zh_name": "中文名稱",
     "input_en_name": "英文名稱",
     "input_zh_surname": "姓氏 (中)",
@@ -76,6 +79,7 @@
     "input_amount":"金額",
     "input_transaction_date":"交易日期",
     "input_description":"詳細",
+    "input_balance":"餘額",
     "radio_female": "女性",
     "radio_male": "男性",
     "radio_other": "其他",
@@ -96,5 +100,7 @@
     "field_error_required":"不能為空白",
     "field_error_true_only":"格式錯誤",
     "system_error":"系統錯誤",
-    "form_invalid":"表格無效"
+    "form_invalid":"表格無效",
+    "btn_new":"新增",
+    "ph_search":"搜尋"
 }

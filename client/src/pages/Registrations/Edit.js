@@ -9,6 +9,7 @@ import {
 import {
     MuiPickersUtilsProvider,
     KeyboardDatePicker,
+    DatePicker
 } from '@material-ui/pickers';
 import { toast } from 'react-toastify';
 import { withTranslation, Trans } from 'react-i18next';
@@ -677,11 +678,13 @@ class EditRegistration extends Component {
                                             required
                                             label={ `${t('input_dob')}:` }
                                         >
-                                            <KeyboardDatePicker
+                                            <DatePicker
                                                 fullWidth
                                                 value={_.get(content,"dob", null)}
                                                 placeholder=""
                                                 required
+                                                openTo="year"
+                                                views={["year","month"]}
                                                 error={ errors.dob }
                                                 inputVariant="outlined"
                                                 onChange={ this.handleOnDateChange('dob') }
@@ -834,7 +837,7 @@ class EditRegistration extends Component {
                                                 name="department"
                                                 variant="outlined"
                                                 fullWidth
-                                                error={ errors.office_phone }
+                                                error={ errors.department }
                                                 value={ _.get(content,"department","")}
                                                 onChange={this.handleOnChange}
                                                 type="text"
@@ -990,7 +993,7 @@ class EditRegistration extends Component {
                                                 inputVariant="outlined"
                                                 onChange={ this.handleOnDateChange('paid_at') }
                                                 maxDate={new Date()}
-                                                format="MM-DD-YYYY"
+                                                format="YYYY-MM-DD"
                                                 InputAdornmentProps={{position: "end"}}
                                                 className="datePicker"
                                                 inputProps={{
@@ -1020,9 +1023,11 @@ class EditRegistration extends Component {
                                                 }}
                                             >
                                                 <MenuItem value={null}></MenuItem>
-                                                <MenuItem value="Cash">Cash</MenuItem>
-                                                <MenuItem value="Cheque">Cheque</MenuItem>
-                                                <MenuItem value="Online Payment">Online Payment</MenuItem>
+                                                {
+                                                    global.payment_methods.map((p)=>{
+                                                        return (<MenuItem value={p.value}>{p.label}</MenuItem>);
+                                                    })
+                                                }
                                             </Select>
                                             <FormHelperText className="error">{_.get(errors, "payment_method","")}</FormHelperText>
                                         </FormItemContainer>

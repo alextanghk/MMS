@@ -57,7 +57,7 @@ const useStyle = makeStyles({
 const FileUpload = props => {
 
     const [file, setFiles] = useState(null);
-    const { name, onChange, icon, deletedField, value } = props;
+    const { name, onChange, icon, deletedField, value, disabled= false } = props;
 
     const [preview, setPreview] = useState(null);
     const [fileKey, setFileKey] = useState(moment().format("YYYYMMDDHHmmss"));
@@ -108,10 +108,10 @@ const FileUpload = props => {
         />
         <Paper className={classes.uploadContainer}>
             {
-                preview ? <IconButton color="secondary" className={classes.uploadRemove} component="span" onClick={handleRemove}>
+                preview ? <IconButton color="secondary" className={classes.uploadRemove} disabled={disabled} component="span" onClick={handleRemove}>
                     <CancelIcon />
                 </IconButton> : <label htmlFor="icon-button-photo" className={classes.uploadButton}>
-                    <IconButton color="primary" component="span">
+                    <IconButton color="primary" component="span" disabled={disabled}>
                         {icon === undefined ? <AddAPhotoIcon /> : <Component component={icon}/>}
                     </IconButton>
                 </label>

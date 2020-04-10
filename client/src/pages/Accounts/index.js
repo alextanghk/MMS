@@ -23,11 +23,12 @@ const Accounts = props => {
     })
     
     const columns = [
-        { key: "bank", label: "Bank" },
-        { key: "balance", label: "Balance" },
-        { key: "remark", label: "Remark" },
-        { key: "is_default", label: "Default", render: (row,text) => { return text ? "Y": "N"} },
-        { key: "updated_at", label: "Last Updated", render: (record, text)=>{ return moment(text).format("YYYY-MM-DD HH:mm");}}
+        { key: "bank", label: t('input_bank') },
+        { key: "bank_no", label: t('input_bank_no') },
+        { key: "balance", label: t('input_balance'), render:(row,text)=>{ return `HKD$${text == null ? 0: text}`;} },
+        { key: "remark", label: t('input_remark') },
+        { key: "is_default", label: t('input_is_default'), render: (row,text) => { return text ? "Y": "N"} },
+        { key: "updated_at", label: t('lb_last_updated'), render: (record, text)=>{ return moment(text).format("YYYY-MM-DD HH:mm");}}
     ];
 
     const GetData = () => {
@@ -67,7 +68,7 @@ const Accounts = props => {
                     <Grid container>
                         <Grid item xs={6}>
                             <SearchBox 
-                                placeholder="Search..."
+                                placeholder={ t('ph_search') }
                                 variant="outlined"
                                 onSearch={(value)=>{
                                     setFilter(value);
@@ -82,7 +83,7 @@ const Accounts = props => {
                                 className="float-right"
                                 href="/accounts/create"
                             >
-                                New
+                                {t('btn_new')}
                             </Button>
                         </Grid>
                         <Grid xs={12} className="list-table-container">

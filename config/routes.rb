@@ -62,6 +62,7 @@ Rails.application.routes.draw do
         get "/:item_id" => :get
         post "/create" => :create
         put "/update/:item_id" => :update
+        put "/approve/:item_id" => :approve
         delete "/delete/:item_id" => :delete
       end
 
@@ -71,6 +72,7 @@ Rails.application.routes.draw do
         post "/create" => :create
         put "/update/:item_id" => :update
         put "/approve/:item_id" => :approve
+        put "/handle/:item_id" => :handle
         put "/reject/:item_id" => :reject
         put "/cancel/:item_id" => :cancel
         delete "/delete/:item_id" => :delete

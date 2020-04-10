@@ -8,6 +8,7 @@ import { withTranslation, Trans } from 'react-i18next';
 import {
     MuiPickersUtilsProvider,
     KeyboardDatePicker,
+    DatePicker
 } from '@material-ui/pickers';
 import _ from 'lodash';
 import Breadcrumbs from '../../components/Breadcrumbs';
@@ -46,7 +47,7 @@ class EditMember extends Component {
                 emergency_contact: "",
                 emergency_relation: "",
                 emergency_number: "",
-                profile: {},
+                profile: "",
                 profile_file: null,
                 subscription:true,
                 sent_group_invite: false,
@@ -457,15 +458,17 @@ class EditMember extends Component {
                                             required
                                             label={ `${t('input_dob')}:` }
                                         >
-                                            <KeyboardDatePicker
+                                            <DatePicker
                                                 fullWidth
                                                 value={_.get(content,"dob", null)}
                                                 placeholder=""
                                                 required
+                                                openTo="year"
+                                                views={["year", "month"]}
                                                 inputVariant="outlined"
                                                 onChange={ this.handleOnDateChange('dob') }
                                                 maxDate={new Date()}
-                                                format="MM-DD-YYYY"
+                                                format="YYYY-MM-DD"
                                                 InputAdornmentProps={{position: "end"}}
                                                 className="datePicker"
                                                 inputProps={{

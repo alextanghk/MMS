@@ -17,3 +17,14 @@ global.Fetch = (url, myHeader = {}) => {
         return response.json();
     })
 }
+
+global.payment_methods = [
+    { label: "Bank Transaction", value: "Bank Transaction" },
+    { label: "Cash", value: "Cash" },
+    { label: "Cheque", value: "Cheque" },
+    { label: "Credit Card", value: "Credit Card" },
+    { label: "FPS", value: "FPS" },
+    { label: "PayMe", value: "PayMe" },
+    { label: "Online Payment", value: "Online Payment" },
+    { label: "Other", value: "Other" }
+]

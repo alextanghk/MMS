@@ -5,11 +5,14 @@ class Transaction < ApplicationRecord
   belongs_to :account
 
   scope :active, -> { where(is_deleted: false) }
+  scope :active_and_approved, -> { where({is_deleted: false,is_approved: true}) }
 
   validates :invoice_number, presence: { message: "field_error_required"}
   validates :item_name, presence: { message: "field_error_required"}
   validates :transaction_date, presence: { message: "field_error_required"}
   validates :amount, presence: { message: "field_error_required"}
+  validates :approved_by, presence: { message: "field_error_required", if: :approved_item? }
+  validates :approved_at, presence: { message: "field_error_required", if: :approved_item? }
 
   if Rails.env.production?
     has_attached_file :receipt, 
@@ -40,9 +43,16 @@ class Transaction < ApplicationRecord
 
   after_save do
     Account.active.each do |acc|
-      acc.update_attribute(:balance, acc.transactions.active.sum(:amount))
+      acc.update_attribute(:balance, acc.transactions.active_and_approved.sum(:amount))
     end
   end
+
+  # Validation checking
+  def approved_item?
+    is_approved
+  end
+
+  # Access checking
 
   def can_be_created_by?(user)
     return true if user.user_group.access_rights.exists?(code: ["ALL_REQUEST","POST_TRANSACTION"])

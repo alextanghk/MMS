@@ -8,7 +8,7 @@ class Api::V1::AccountsController < Api::V1::ApplicationController
         page = query[:page].present? ? query[:page] : 1
         size = query[:size].present? ? query[:size] : 25
         if query[:keywords].present?
-            items = items.where("bank LIKE ? ","%#{query[:keywords]}%")
+            items = items.where("bank LIKE ? OR bank_no LIKE ? ","%#{query[:keywords]}%","%#{query[:keywords]}%")
         end
         items = items.order(query[:order] => query[:sort])
         render json: {

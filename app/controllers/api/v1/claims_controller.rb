@@ -42,7 +42,11 @@ class Api::V1::ClaimsController < Api::V1::ApplicationController
     end
 
     def create 
-        form = params.permit(:receipt, :invoice_number, :item_name, :description, :paid_by, :amount, :paid_at)
+        form = params.permit(:receipt, :invoice_number, 
+            :item_name, :description, :paid_by, :item_type,
+            :amount, :paid_at, :provider, :payment_method, :transaction_date,
+            :approved_by, :approved_at, :handled_by, :handled_at
+        )
         
         item = Claim.new(form)
 
@@ -73,10 +77,24 @@ class Api::V1::ClaimsController < Api::V1::ApplicationController
         item_id = params[:item_id]
         item = Claim.active.find(item_id.to_i)
         raise SecurityTransgression unless @current_user.can_update?(item)
-        if item.status == "Approved"
-            raise SecurityTransgression unless @current_user.can_do?("UPDATE_AFTER_CLAIM_APPROVED")
+
+        form = params.permit(:receipt, :invoice_number, 
+            :item_name, :description, :paid_by, :item_type,
+            :amount, :paid_at, :provider, :payment_method, :transaction_date,
+            :approved_by, :approved_at, :handled_by, :handled_at
+        )
+        if item.is_approved
+            form = params.permit(
+                :description, :payment_method, :transaction_date,
+                :handled_by, :handled_at
+            )
         end
-        form = params.permit(:receipt, :invoice_number, :item_name, :description, :paid_by, :amount, :paid_at)
+
+        if item.is_handled
+            form = params.permit(
+                :description, :payment_method
+            )
+        end
 
         item.assign_attributes(form)
 
@@ -132,17 +150,66 @@ class Api::V1::ClaimsController < Api::V1::ApplicationController
         raise SecurityTransgression unless @current_user.can_do?("APPROVE_CLAIM")
         item_id = params[:item_id]
         item = Claim.active.find(item_id.to_i)
+        if item.is_approved
+            render json: { message: "claims_approved" , error: "claims_approved" }, status: :internal_server_error
+            return
+        end
         if item.status != "New"
             render json: { message: "claim_"+item.status.downcase , error: "claim_"+item.status.downcase }, status: :internal_server_error
             return
         end
+        
+        item.status = "Approved"
+        item.is_approved = true
+        if !item.valid?
+            render status:500, json: {
+                message: "invalid",
+                error: item.errors.messages,
+                data: nil
+            }
+            return
+        end
+        item.save
+        render json: {
+            message: "success",
+            error: nil,
+            data: nil
+        }
+    rescue ActiveRecord::RecordNotFound => e
+        render json: { message: "data_not_found", error: "data_not_found" }, status: :not_found
+    rescue => e
+        render json: { message: "system_error", error: e.message }, status: :internal_server_error
+    end
 
+    def handle
+        raise SecurityTransgression unless @current_user.can_do?("HANDLE_CLAIM")
+        item_id = params[:item_id]
+        item = Claim.active.find(item_id.to_i)
+        if item.is_handled
+            render json: { message: "claims_handled" , error: "claims_handled" }, status: :internal_server_error
+            return
+        end
+        if !item.is_approved
+            render json: { message: "claims_not_approved" , error: "claims_not_approved" }, status: :internal_server_error
+            return
+        end
+        if ["Rejected","Cancelled"].include?(item.status)
+            render json: { message: "claim_"+item.status.downcase , error: "claim_"+item.status.downcase }, status: :internal_server_error
+            return
+        end
+        
         trans = Transaction.new({
             :account => Account.find_by(:is_default => true),
             :invoice_number => item.invoice_number,
             :item_name => item.item_name,
+            :item_type => item.item_type,
+            :payment_method => item.payment_method,
+            :approved_by => item.approved_by,
+            :provider => item.provider,
+            :approved_at => item.approved_at,
             :amount => item.amount*-1,
-            :transaction_date => item.paid_at,
+            :is_approved => true,
+            :transaction_date => item.transaction_date,
             :description => item.description,
             :receipt => item.receipt
         }) 
@@ -155,10 +222,10 @@ class Api::V1::ClaimsController < Api::V1::ApplicationController
             }
             return
         end
-
         trans.save
         item.claim_transaction = trans
-        item.status = "Approved"
+        item.status = "Handled"
+        item.is_handled = true
         if !item.valid?
             render status:500, json: {
                 message: "invalid",

@@ -23,13 +23,13 @@ const Claims = props => {
     })
     
     const columns = [
-        { key: "paid_by", label: "Paid By" },
-        { key: "paid_at", label: "Paid At", render: (record, text)=>{ return moment(text).format("YYYY-MM-DD");}},
-        { key: "invoice_number", label: "Invoice Name" },
-        { key: "item_name", label: "Item Name" },
-        { key: "amount", label: "Amount" },
-        { key: "status", label: "Status" },
-        { key: "updated_at", label: "Last Updated", render: (record, text)=>{ return moment(text).format("YYYY-MM-DD HH:mm");}}
+        { key: "paid_by", label: t('input_paid_by') },
+        { key: "paid_at", label: t('input_paid_at'), render: (record, text)=>{ return moment(text).format("YYYY-MM-DD");}},
+        { key: "invoice_number", label: t('input_invoice_number') },
+        { key: "item_name", label: t('input_item_name') },
+        { key: "amount", label: t('input_amount'), render:(row,text)=>{ return `$${text == null ? 0: text}`;} },
+        { key: "status", label: t('input_status') },
+        { key: "updated_at", label: t('lb_last_updated'), render: (record, text)=>{ return moment(text).format("YYYY-MM-DD HH:mm");}}
     ];
 
     const GetData = () => {
@@ -69,7 +69,7 @@ const Claims = props => {
                     <Grid container>
                         <Grid item xs={6}>
                             <SearchBox 
-                                placeholder="Search..."
+                                placeholder={ t('ph_search') }
                                 variant="outlined"
                                 onSearch={(value)=>{
                                     setFilter(value);
@@ -84,7 +84,7 @@ const Claims = props => {
                                 className="float-right"
                                 href="/claims/create"
                             >
-                                New
+                                {t('btn_new')}
                             </Button>
                         </Grid>
                         <Grid xs={12} className="list-table-container">

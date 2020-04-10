@@ -7,7 +7,7 @@ const useStyle = makeStyles({
 
 });
 const FormButtonGroup = (props) => {
-    const { onCancel, children } = props;
+    const { onCancel, children, allowSave = true } = props;
 
     useEffect(()=>{
 
@@ -16,18 +16,20 @@ const FormButtonGroup = (props) => {
     return(
         <Fragment>
             { children }
-            <Button
-                variant="contained"
-                color="primary"
-                size="middle"
-                type="submit"
-                startIcon={<SaveIcon />}
-                style={{
-                    marginRight: "15px"
-                }}
-            >
-                Save
-            </Button>
+            { 
+                allowSave && <Button
+                    variant="contained"
+                    color="primary"
+                    size="middle"
+                    type="submit"
+                    startIcon={<SaveIcon />}
+                    style={{
+                        marginRight: "15px"
+                    }}
+                >
+                    Save
+                </Button>
+            }
             { 
                 onCancel !== undefined && <Button
                     variant="contained"

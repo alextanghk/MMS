@@ -23,13 +23,13 @@ const Members = props => {
     })
     
     const columns = [
-        { key: "zh_surname", label: "Surame (ZH)" },
-        { key: "zh_first_name", label: "First Name (ZH)" },
-        { key: "en_surname", label: "Surame (EH)" },
-        { key: "en_first_name", label: "First Name (EN)" },
-        { key: "email", label: "Email" },
-        { key: "updated_at", label: "Last Updated", render: (record, text)=>{ return moment(text).format("YYYY-MM-DD HH:mm");}},
-        { key: "is_actived", label: "Is Actived", render: (record, text)=>{
+        { key: "zh_surname", label: t('input_zh_surname') },
+        { key: "zh_first_name", label: t('input_zh_first_name') },
+        { key: "en_surname", label: t('input_en_surname') },
+        { key: "en_first_name", label: t('input_en_first_name') },
+        { key: "email", label: t('input_email')  },
+        { key: "updated_at", label: t('lb_last_updated'), render: (record, text)=>{ return moment(text).format("YYYY-MM-DD HH:mm");}},
+        { key: "is_actived", label: t('input_is_actived') , render: (record, text)=>{
             return text ? "Y":"N";
         } }
     ];
@@ -71,7 +71,7 @@ const Members = props => {
                     <Grid container>
                         <Grid item xs={6}>
                             <SearchBox 
-                                placeholder="Search..."
+                                placeholder={ t('ph_search') }
                                 variant="outlined"
                                 onSearch={(value)=>{
                                     setFilter(value);
@@ -86,7 +86,7 @@ const Members = props => {
                                 className="float-right"
                                 href="/members/create"
                             >
-                                New
+                                {t('btn_new')}
                             </Button>
                         </Grid>
                         <Grid xs={12} className="list-table-container">

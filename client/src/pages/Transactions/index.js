@@ -23,12 +23,14 @@ const Transactions = props => {
     })
     
     const columns = [
-        { key: "account.bank", label: "Account" },
-        { key: "invoice_number", label: "Invoice Name" },
-        { key: "item_name", label: "Item Name" },
-        { key: "amount", label: "Amount" },
-        // { key: "remark", label: "Remark" },
-        { key: "updated_at", label: "Last Updated", render: (record, text)=>{ return moment(text).format("YYYY-MM-DD HH:mm");}}
+        { key: "account.bank", label: t('input_account') },
+        { key: "invoice_number", label: t('input_invoice_number') },
+        { key: "item_name", label: t('input_item_name') },
+        { key: "amount", label: t('input_amount'), render:(row,text)=>{ return `$${text == null ? 0: text}`;} },
+        { key: "is_approved", label: t('input_is_approved') , render: (record, text)=>{
+            return text ? "Y":"N";
+        } },
+        { key: "updated_at", label: t('lb_last_updated'), render: (record, text)=>{ return moment(text).format("YYYY-MM-DD HH:mm");}}
     ];
 
     const GetData = () => {
@@ -68,7 +70,7 @@ const Transactions = props => {
                     <Grid container>
                         <Grid item xs={6}>
                             <SearchBox 
-                                placeholder="Search..."
+                                placeholder={ t('ph_search') }
                                 variant="outlined"
                                 onSearch={(value)=>{
                                     setFilter(value);
@@ -83,7 +85,7 @@ const Transactions = props => {
                                 className="float-right"
                                 href="/transactions/create"
                             >
-                                New
+                                {t('btn_new')}
                             </Button>
                         </Grid>
                         <Grid xs={12} className="list-table-container">

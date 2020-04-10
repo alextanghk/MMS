@@ -4,6 +4,7 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TablePagination
 import { lighten, makeStyles } from '@material-ui/core/styles';
 import { Checkbox } from '@material-ui/core';
 import _ from 'lodash';
+import { Trans } from 'react-i18next'
 const useStyles = makeStyles(theme => ({
     root: {
       width: '100%',
@@ -70,7 +71,7 @@ const DataTableHead = props => {
                     })
                 }
                 {
-                    rowAction !== undefined && <TableCell align="right">Action</TableCell>
+                    rowAction !== undefined && <TableCell align="right"><Trans i18nKey="lb_action">Action</Trans></TableCell>
                 }
             </TableRow>
         </TableHead>

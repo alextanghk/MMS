@@ -30,7 +30,6 @@ class CreateRegistrations < ActiveRecord::Migration[6.0]
       t.string :office_address
       t.string :office_phone
       t.attachment :proof
-      
       t.boolean :is_deleted, :default => false
       t.string :created_by
       t.string :updated_by

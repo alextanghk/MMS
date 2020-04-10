@@ -23,11 +23,11 @@ const Users = props => {
     })
     
     const columns = [
-        { key: "user_group.name", label: "User Groups" },
-        { key: "zh_name", label: "Chinese Name" },
-        { key: "en_name", label: "English Name" },
-        { key: "user_name", label: "Username" },
-        { key: "updated_at", label: "Last Updated", render: (record, text)=>{ return moment(text).format("YYYY-MM-DD HH:mm");}}
+        { key: "user_group.name", label: t('input_user_group') },
+        { key: "zh_name", label: t('input_zh_name') },
+        { key: "en_name", label: t('input_en_name') },
+        { key: "user_name", label: t('input_user_name') },
+        { key: "updated_at", label: t('lb_last_updated'), render: (record, text)=>{ return moment(text).format("YYYY-MM-DD HH:mm");}}
     ];
 
     const GetData = () => {
@@ -67,7 +67,7 @@ const Users = props => {
                     <Grid container>
                         <Grid item xs={6}>
                             <SearchBox 
-                                placeholder="Search..."
+                                placeholder={ t('ph_search') }
                                 variant="outlined"
                                 onSearch={(value)=>{
                                     setFilter(value);
@@ -82,7 +82,7 @@ const Users = props => {
                                 className="float-right"
                                 href="/users/create"
                             >
-                                New
+                                {t('btn_new')}
                             </Button>
                         </Grid>
                         <Grid xs={12} className="list-table-container">

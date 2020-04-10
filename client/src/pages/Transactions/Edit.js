@@ -27,6 +27,11 @@ class EditTransition extends Component {
                 account: {},
                 invoice_number: "",
                 item_name: "",
+                item_type: "",
+                payment_method: "",
+                provider: "",
+                approved_by: "",
+                approved_at: null,
                 description: "",
                 transaction_date: null,
                 receipt: null,
@@ -41,6 +46,7 @@ class EditTransition extends Component {
         };
         this.handleOnChange = this.handleOnChange.bind(this);
         this.handleOnChecked = this.handleOnChecked.bind(this);
+        this.handleOnApprove = this.handleOnApprove.bind(this);
         this.handleOnDateChange = this.handleOnDateChange.bind(this);
         this.handleOnDateChange = this.handleOnDateChange.bind(this);
         this.handleOnSubmit = this.handleOnSubmit.bind(this);
@@ -170,6 +176,92 @@ class EditTransition extends Component {
             })
         }
     }
+
+    handleOnApprove = (e) => {
+        e.preventDefault();
+        const { match: { params } } = this.props;
+        const { id } = params;
+        const { t, i18n } = this.props;
+        const _this = this;
+
+        // Check Approved data
+        const {content} = this.state;
+        this.setState({
+            errors: {}
+        })
+        let errors = {};
+
+        if (!content.approved_at) errors.approved_at = t("field_error_required");
+        if (!content.approved_by) errors.approved_by = t("field_error_required");
+
+        this.setState(prevState => ({
+            ...prevState,
+            ["errors"]: errors
+        }))
+        if (Object.keys(errors).length > 0) {
+            toast.error(t("form_invalid"), {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: false,
+                draggable: false,
+                onClose: () => {
+                    _this.setState({
+                        loading: false
+                    })
+                }
+            });
+            return false;
+        }
+
+        this.setState({
+            loading: true,
+            message: "",
+            status:"",
+        })
+        
+        
+        this.OnSave()
+        .then((result)=>{
+            return global.Fetch(`transactions/approve/${id }`,{
+                method: 'PUT',
+                credentials: 'include',
+                headers: new Headers({
+                    'Accept': 'application/json'
+                }),
+                body: {}
+            })
+        }).then((result)=>{
+            toast.success(t("success_approved"), {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: false,
+                draggable: false,
+                onClose: () => {
+                    window.location.href = `/transactions/edit/${id}`;
+                }
+            });
+        }).catch((err)=>{
+            const message = _.get(err,'message',err);
+
+            toast.error(message ? t(message) : t("system_error"), {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: false,
+                draggable: false,
+                onClose: () => {
+                    _this.setState({
+                        loading: false
+                    })
+                }
+            });
+        })
+    }
     handleOnSubmit = (e) => {
         e.preventDefault();
         this.setState({
@@ -247,6 +339,7 @@ class EditTransition extends Component {
                                                 required
                                                 onChange={this.handleOnChange}
                                                 className="form-input"
+                                                disabled={content.is_approved}
                                             />
                                         </FormItemContainer>
                                     </Grid>
@@ -266,7 +359,30 @@ class EditTransition extends Component {
                                                 helperText={_.get(errors, "invoice_number","")}
                                                 required
                                                 inputProps={{
-                                                    className:"form-input"
+                                                    className:"form-input",
+                                                    readOnly: content.is_approved
+                                                }}
+                                            />
+                                        </FormItemContainer>
+                                    </Grid>
+                                    <Grid item md={5} spacing={1}>
+                                        <FormItemContainer
+                                            required
+                                            label={ `${t('input_provider')}:` }
+                                        >
+                                            <TextField
+                                                name="provider"
+                                                variant="outlined"
+                                                fullWidth
+                                                
+                                                value={ _.get(content,"provider","")}
+                                                onChange={this.handleOnChange}
+                                                type="text"
+                                                helperText={_.get(errors, "provider","")}
+                                                required
+                                                inputProps={{
+                                                    className:"form-input",
+                                                    readOnly: content.is_approved
                                                 }}
                                             />
                                         </FormItemContainer>
@@ -280,16 +396,66 @@ class EditTransition extends Component {
                                                 name="item_name"
                                                 variant="outlined"
                                                 fullWidth
-                                                
+                                                multiline
                                                 value={ _.get(content,"item_name","")}
                                                 onChange={this.handleOnChange}
                                                 type="text"
                                                 helperText={_.get(errors, "item_name","")}
                                                 required
                                                 inputProps={{
-                                                    className:"form-input"
+                                                    className:"form-input",
+                                                    readOnly: content.is_approved
                                                 }}
                                             />
+                                        </FormItemContainer>
+                                    </Grid>
+                                    <Grid item md={5} spacing={1}>
+                                        <FormItemContainer
+                                            required
+                                            label={ `${t('input_item_type')}:` }
+                                        >
+                                            <TextField
+                                                name="item_type"
+                                                variant="outlined"
+                                                fullWidth
+                                                
+                                                value={ _.get(content,"item_type","")}
+                                                onChange={this.handleOnChange}
+                                                type="text"
+                                                helperText={_.get(errors, "item_type","")}
+                                                required
+                                                inputProps={{
+                                                    className:"form-input",
+                                                    readOnly: content.is_approved
+                                                }}
+                                            />
+                                        </FormItemContainer>
+                                    </Grid>
+                                    <Grid item md={5} spacing={1}>
+                                        <FormItemContainer
+                                            required={content.paid}
+                                            label={ `${t('input_payment_method')}:` }
+                                        >
+                                            <Select
+                                                value={ _.get(content,"payment_method","")}
+                                                name="payment_method"
+                                                variant="outlined"
+                                                fullWidth
+                                                error={ errors.payment_method }
+                                                required={content.paid}
+                                                onChange={this.handleOnChange}
+                                                inputProps={{
+                                                    className:"form-input"
+                                                }}
+                                            >
+                                                <MenuItem value={null}></MenuItem>
+                                                {
+                                                    global.payment_methods.map((p)=>{
+                                                        return (<MenuItem value={p.value}>{p.label}</MenuItem>);
+                                                    })
+                                                }
+                                            </Select>
+                                            <FormHelperText className="error">{_.get(errors, "payment_method","")}</FormHelperText>
                                         </FormItemContainer>
                                     </Grid>
                                     <Grid item md={5} spacing={1}>
@@ -308,6 +474,7 @@ class EditTransition extends Component {
                                                 required
                                                 inputProps={{
                                                     className:"form-input",
+                                                    readOnly: content.is_approved,
                                                     step:0.01
                                                 }}
                                             />
@@ -326,17 +493,58 @@ class EditTransition extends Component {
                                                 inputVariant="outlined"
                                                 onChange={ this.handleOnDateChange('transaction_date') }
                                                 maxDate={new Date()}
-                                                format="MM-DD-YYYY"
+                                                format="YYYY-MM-DD"
                                                 InputAdornmentProps={{position: "end"}}
                                                 className="datePicker"
                                                 inputProps={{
-                                                    className:"form-input date-input"
+                                                    className:"form-input date-input",
+                                                    disabled: content.is_approved
                                                 }}
                                             />
                                             <FormHelperText className="error">{_.get(errors, "transaction_date","")}</FormHelperText>
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}></Grid>
+                                    <Grid item md={5} spacing={1}>
+                                        <FormItemContainer
+                                            label={ `${t('input_approved_by')}:` }
+                                        >
+                                            <TextField
+                                                name="approved_by"
+                                                variant="outlined"
+                                                fullWidth
+                                                value={ _.get(content,"approved_by","")}
+                                                onChange={this.handleOnChange}
+                                                type="text"
+                                                helperText={_.get(errors, "approved_by","")}
+                                                inputProps={{
+                                                    className:"form-input",
+                                                    readOnly: content.is_approved
+                                                }}
+                                            />
+                                        </FormItemContainer>
+                                    </Grid>
+                                    <Grid item md={5} spacing={1}>
+                                        <FormItemContainer
+                                            label={ `${t('input_approved_at')}:` }
+                                        >
+                                            <KeyboardDatePicker
+                                                fullWidth
+                                                value={_.get(content,"approved_at", null)}
+                                                placeholder=""
+                                                inputVariant="outlined"
+                                                onChange={ this.handleOnDateChange('approved_at') }
+                                                maxDate={new Date()}
+                                                format="YYYY-MM-DD"
+                                                InputAdornmentProps={{position: "end"}}
+                                                className="datePicker"
+                                                inputProps={{
+                                                    className:"form-input date-input",
+                                                    disabled: content.is_approved
+                                                }}
+                                            />
+                                            <FormHelperText className="error">{_.get(errors, "approved_at","")}</FormHelperText>
+                                        </FormItemContainer>
+                                    </Grid>
                                     <Grid item md={5} spacing={1}>
                                         <FormItemContainer
                                             
@@ -347,6 +555,7 @@ class EditTransition extends Component {
                                                 onChange={this.handleOnUpload} 
                                                 name="receipt_file"
                                                 deletedField="delete_receipt"
+                                                disabled={content.is_approved}
                                             />
                                         </FormItemContainer>
                                     </Grid>
@@ -374,7 +583,22 @@ class EditTransition extends Component {
                             </CardContent>
                             <CardActions>
                                 <Grid container>
-                                    <Grid item sm={12} xs={12} style={{textAlign:"right"}}>
+                                    <Grid item sm={6} xs={6}>
+                                    {
+                                        (id !== undefined && !content.is_approved) && <Button 
+                                            onClick={this.handleOnApprove}
+                                            color="primary"
+                                            size="middle"
+                                            variant="contained"
+                                            style={{
+                                                marginRight: "15px"
+                                            }}
+                                        >
+                                            Approve
+                                        </Button>
+                                    }
+                                    </Grid>
+                                    <Grid item sm={6} xs={6} style={{textAlign:"right"}}>
                                         <FormButtonGroup
                                             onCancel={(e) => {
                                                 e.preventDefault()

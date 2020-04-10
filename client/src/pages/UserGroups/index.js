@@ -23,8 +23,8 @@ const UserGroups = props => {
     })
     
     const columns = [
-        { key: "name", label: "User Group" },
-        { key: "updated_at", label: "Last Updated", render: (record, text)=>{ return moment(text).format("YYYY-MM-DD HH:mm");}}
+        { key: "name", label: t('input_user_group') },
+        { key: "updated_at", label: t('lb_last_updated'), render: (record, text)=>{ return moment(text).format("YYYY-MM-DD HH:mm");}}
     ];
 
     const GetData = () => {
@@ -64,7 +64,7 @@ const UserGroups = props => {
                     <Grid container>
                         <Grid item xs={6}>
                             <SearchBox 
-                                placeholder="Search..."
+                                placeholder={ t('ph_search') }
                                 variant="outlined"
                                 onSearch={(value)=>{
                                     setFilter(value);
@@ -79,7 +79,7 @@ const UserGroups = props => {
                                 className="float-right"
                                 href="/usergroups/create"
                             >
-                                New
+                                {t('btn_new')}
                             </Button>
                         </Grid>
                         <Grid xs={12} className="list-table-container">

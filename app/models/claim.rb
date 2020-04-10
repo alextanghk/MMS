@@ -9,8 +9,13 @@ class Claim < ApplicationRecord
     validates :paid_at, presence: { message: "field_error_required"}
     validates :paid_by, presence: { message: "field_error_required"}
     validates :amount, presence: { message: "field_error_required"}
+    validates :payment_method, presence: { message: "field_error_required"}
     
-    validates :status, inclusion: { in:["New","Approved","Rejected","Cancelled"], message: "field_error_value_invalid", allow_nil: true}
+    validates :status, inclusion: { in:["New","Approved","Handled","Rejected","Cancelled"], message: "field_error_value_invalid", allow_nil: true}
+    validates :approved_by, presence: { message: "field_error_required", if: :approved_item? }
+    validates :approved_at, presence: { message: "field_error_required", if: :approved_item? }
+    validates :handled_by, presence: { message: "field_error_required", if: :handled_item? }
+    validates :handled_at, presence: { message: "field_error_required", if: :handled_item? }
 
     Paperclip.interpolates :uuid do |attachment, style|
         attachment.instance.uuid
@@ -42,6 +47,18 @@ class Claim < ApplicationRecord
             break random_token unless self.class.exists?(uuid: random_token)
         end
     end
+
+
+    # Validation checking
+    def approved_item?
+        is_approved
+    end
+
+    def handled_item?
+        is_handled
+    end
+
+    # Access checking
 
     def can_be_created_by?(user)
         return true if user.user_group.access_rights.exists?(code: ["ALL_REQUEST","POST_CLAIM"])
