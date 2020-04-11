@@ -14,8 +14,40 @@ import {
 import HomeIcon from '@material-ui/icons/Home';
 import _ from 'lodash';
 import moment from 'moment';
+import { toast } from 'react-toastify';
 const cookies = new Cookies();
 
+class LoggedIn extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            isLoggedIn: true,
+            loading: true
+        }
+    }
+    componentDidMount() {
+        this.setState({
+            loading: true
+        })
+        global.Fetch("auth").then((result)=>{
+            this.setState({
+                loading: false
+            })  
+        }).catch((err)=>{
+            cookies.remove("mms_user",{path:"/",domain:window.location.hostname});
+            this.setState({
+                isLoggedIn: false
+            })
+        })
+    }
+
+    render() {
+        return (<Fragment>
+            { this.state.loading && <Loader />}
+            { !this.state.isLoggedIn && <Redirect to={{pathname: "/login"}}/> }
+        </Fragment>)
+    }
+}
 const SubSidbarNav = (props) => {
     const [open, setOpen] = useState(false);
     const { t, i18n } = useTranslation();
@@ -43,7 +75,7 @@ const SubSidbarNav = (props) => {
         <Collapse in={open} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
                 {
-                    child.map((nav)=>{
+                    child.filter(x => x.accessible).map((nav)=>{
                         return(
                             <ListItem className="menu-item link" key={nav.id} button>
                                 <NavLink className="nav-item" exact to={nav.link}>
@@ -68,27 +100,22 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
     const { t, i18n } = useTranslation();
 
     const navigations = [
-        { id: 1001, name: `${t("lb_home")}`, link: "/", icon: (<HomeIcon />) },
-        { id: 1002, name: `${t("lb_registrations")}`, link: "/registrations", icon: (<BorderColor />) },
-        { id: 1003, name: `${t("lb_members")}`, link: "/members", icon: (<PeopleAlt />) },
+        { id: 1001, name: `${t("lb_home")}`, link: "/", icon: (<HomeIcon />), accessible: true },
+        { id: 1002, name: `${t("lb_registrations")}`, link: "/registrations", icon: (<BorderColor />), accessible: global.Accessible("GET_REGISTRATION") },
+        { id: 1003, name: `${t("lb_members")}`, link: "/members", icon: (<PeopleAlt />), accessible: global.Accessible("GET_MEMBER") },
         { id: 1004, name: `${t("lb_finance")}`, child: [
-            { id: 10041, name: `${t("lb_accounts")}`, link: "/accounts", icon:(<AccountBalance />) },
-            { id: 10042, name: `${t("lb_transactions")}`, link: "/transactions", icon:(<SwapHoriz />) },
-            { id: 10043, name: `${t("lb_claims")}`, link: "/claims", icon:(<Receipt />) }
-        ], icon: (<LocalAtm />)}, 
+            { id: 10041, name: `${t("lb_accounts")}`, link: "/accounts", icon:(<AccountBalance />), accessible: global.Accessible("GET_ACCOUNT") },
+            { id: 10042, name: `${t("lb_transactions")}`, link: "/transactions", icon:(<SwapHoriz />), accessible: global.Accessible("GET_TRANSACTION") },
+            { id: 10043, name: `${t("lb_claims")}`, link: "/claims", icon:(<Receipt />), accessible: global.Accessible("GET_CLAIM") }
+        ], icon: (<LocalAtm />), accessible: global.Accessible(["GET_ACCOUNT","GET_TRANSACTION","GET_CLAIM"]) }, 
         { id: 1005, name: `${t("lb_system")}`,child:[
-            { id: 10051, name: `${t("lb_usergroups")}`, link: "/usergroups", icon:(<GroupWork />) },
-            { id: 10052, name: `${t("lb_users")}`, link: "/users", icon:(<AccountCircle />) }
-        ], icon: (<Settings />)}
+            { id: 10051, name: `${t("lb_usergroups")}`, link: "/usergroups", icon:(<GroupWork />), accessible: global.Accessible("GET_USER_GROUP") },
+            { id: 10052, name: `${t("lb_users")}`, link: "/users", icon:(<AccountCircle />), accessible: global.Accessible("GET_USER") }
+        ], icon: (<Settings />), accessible: global.Accessible(["GET_USER_GROUP","GET_USER"])}
     ];
 
     useEffect(()=>{
-        global.Fetch("auth").then((result)=>{
-            
-        }).catch((err)=>{
-            cookies.remove("mms_user");
-            setTimeout(()=>{setLoggedOut(true);},300)
-        })
+        
     },[])
 
     const handleLogout = (e) =>{
@@ -97,10 +124,10 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
         global.Fetch("auth/logout",{
             method: "POST"
         }).then((result)=>{
-            cookies.remove("mms_user");
+            cookies.remove("mms_user",{path: "/",domain:window.location.hostname});
             setTimeout(()=>{setLoggedOut(true);},300)
         }).catch((err)=>{
-            cookies.remove("mms_user");
+            cookies.remove("mms_user",{path: "/",domain:window.location.hostname});
             setTimeout(()=>{setLoggedOut(true);},300)
             setLoading(false);
         })
@@ -112,6 +139,7 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
             { loading && <Loader />}
         </Fragment> : <Fragment>
         <Grid className="main-container">
+            <LoggedIn />
             <List 
                 className={`main-menu ${collapse ? 'collapsed':''}`}
                 component="nav"
@@ -135,7 +163,7 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
                     </NavLink>
                 </ListItem>
             {
-                navigations.map((nav)=>{
+                navigations.filter(x => x.accessible).map((nav)=>{
                     if (nav.child !== undefined) {
                         return(<SubSidbarNav
                             name={nav.name}

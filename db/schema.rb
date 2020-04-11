@@ -20,6 +20,8 @@ ActiveRecord::Schema.define(version: 2020_03_22_163314) do
     t.string "displayname", null: false
     t.string "function", null: false
     t.string "category", null: false
+    t.integer "func_weight", default: 0, null: false
+    t.integer "cat_weight", default: 0, null: false
     t.integer "weight", default: 0, null: false
     t.boolean "is_display", default: false
     t.boolean "is_deleted", default: false

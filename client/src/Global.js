@@ -1,3 +1,7 @@
+import Cookies from 'universal-cookie';
+import _ from "lodash";
+
+const cookies = new Cookies();
 global.Fetch = (url, myHeader = {}) => {
     let defaultHeader = {
         crossDomain:true,
@@ -18,6 +22,22 @@ global.Fetch = (url, myHeader = {}) => {
     })
 }
 
+global.Accessible = (code) => {
+    const user = cookies.get('mms_user');
+    if (user === undefined)
+        return false;
+    const { access_rights } = user;
+    if (typeof code === "object") {
+        code.push("ALL_REQUEST")
+    } else {
+        code = ["ALL_REQUEST",code];
+    }
+    let result = _.some(code, (el) => _.includes(access_rights, el));
+    
+    return result;
+}
+
+// Global Configs
 global.payment_methods = [
     { label: "Bank Transaction", value: "Bank Transaction" },
     { label: "Cash", value: "Cash" },

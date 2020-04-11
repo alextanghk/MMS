@@ -102,7 +102,8 @@ class EditUserGroup extends Component {
             errors: {}
         })
         let errors = {};
-        // if (!values.zh_surname) errors.zh_surname = t("field_error_required");
+        if (!values.name) errors.name = t("field_error_required");
+        if (values.access_rights.length == 0) errors.access_rights = t("field_error_required");
         
         this.setState(prevState => ({
             ...prevState,
@@ -186,7 +187,12 @@ class EditUserGroup extends Component {
         const { t, i18n } = this.props;
         const { match: { params } } = this.props;
         const { id } = params;
-
+        let allowSave = true;
+        if (id === undefined) {
+            allowSave = global.Accessible("POST_USER_GROUP");
+        } else {
+            allowSave = global.Accessible("PUT_USER_GROUP");
+        }
         return (<Fragment>
             <Helmet>
                 <title>{ `${t("lb_usergroups")} - ${process.env.REACT_APP_TITLE}` }</title>
@@ -209,13 +215,13 @@ class EditUserGroup extends Component {
                                     <FormItemContainer
                                         required
                                         large
-                                        label={ `${t('input_name')}:` }
+                                        label={ `${t('input_group_name')}:` }
                                     >
                                         <TextField
                                             name="name"
                                             variant="outlined"
                                             fullWidth
-                                            
+                                            error={errors.name}
                                             value={ _.get(content,"name","")}
                                             onChange={this.handleOnChange}
                                             type="text"
@@ -236,6 +242,7 @@ class EditUserGroup extends Component {
                                             name="remark"
                                             variant="outlined"
                                             fullWidth
+                                            error={errors.remark}
                                             value={ _.get(content,"remark","")}
                                             onChange={this.handleOnChange}
                                             type="text"
@@ -258,6 +265,7 @@ class EditUserGroup extends Component {
                                             value={ content.access_rights }
                                             onChange={this.handleOnChecked}
                                         />
+                                        <FormHelperText className="error">{_.get(errors, "access_rights","")}</FormHelperText>
                                     </FormItemContainer>
                                 </Grid>
                             </Grid>
@@ -266,6 +274,7 @@ class EditUserGroup extends Component {
                             <Grid container>
                                 <Grid item sm={12} xs={12} style={{textAlign:"right"}}>
                                     <FormButtonGroup
+                                        allowSave={allowSave}
                                         onCancel={(e) => {
                                             e.preventDefault()
                                             window.location.href="/usergroups"

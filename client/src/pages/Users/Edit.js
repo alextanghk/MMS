@@ -108,12 +108,31 @@ class EditUser extends Component {
     }
     validations = (values) => {
         const { t, i18n } = this.props;
+        const { match: { params } } = this.props;
+        const { id } = params;
+
         this.setState({
             errors: {}
         })
         let errors = {};
-        // if (!values.zh_surname) errors.zh_surname = t("field_error_required");
+        if (!values.zh_name) errors.zh_name = t("field_error_required");
+        if (!values.en_name) errors.en_name = t("field_error_required");
+        if (!values.user_group_id) errors.user_group_id = t("field_error_required");
+        if (!values.email) errors.email = t("field_error_required");
+        if (!values.user_name) errors.user_name = t("field_error_required");
        
+        if (!values.password) {
+            if (id === undefined) {
+                errors.password = t("field_error_required");
+            }
+        } else {
+            if (!values.password_confirmation) {
+                errors.password_confirmation = t("field_error_required");
+            } else if (values.password != values.password_confirmation) {
+                errors.password_confirmation = t("field_password_confirmation_not_match");
+            }
+        }
+
         this.setState(prevState => ({
             ...prevState,
             ["errors"]: errors
@@ -126,7 +145,6 @@ class EditUser extends Component {
         const { id } = params;
         const {content} = this.state;
         const errors = this.validations(content);
-        
         if (!_.isEmpty(errors)) {
             return Promise.reject({ message: "form_invalid" });
         } else {
@@ -134,6 +152,8 @@ class EditUser extends Component {
             _.reduce(content, (r,v,k)=>{
                 if (v != null) {
                     switch(k) {
+                        case "user_group":
+                            break;
                         default:
                             data.append(k,v);
                             break;
@@ -172,8 +192,15 @@ class EditUser extends Component {
                 }
             });
         }).catch((err)=>{
-            const message = _.get(err,'message',err);
-
+            const { message = "", error = null } = err;
+            if (error != null) {
+                this.setState({
+                    errors: _.reduce(error,(r,v,k) =>{
+                        r[k] = t(_.get(v,"0",""));
+                        return r;
+                    },{})
+                })
+            }
             toast.error(message ? t(message) : t("system_error"), {
                 position: "top-right",
                 autoClose: 5000,
@@ -195,6 +222,13 @@ class EditUser extends Component {
         const { t, i18n } = this.props;
         const { match: { params } } = this.props;
         const { id } = params;
+
+        let allowSave = true;
+        if (id === undefined) {
+            allowSave = global.Accessible("POST_USER");
+        } else {
+            allowSave = global.Accessible("PUT_USER");
+        }
 
         return (<Fragment>
             <Helmet>
@@ -223,7 +257,7 @@ class EditUser extends Component {
                                             name="zh_name"
                                             variant="outlined"
                                             fullWidth
-                                            
+                                            error={errors.zh_name}
                                             value={ _.get(content,"zh_name","")}
                                             onChange={this.handleOnChange}
                                             type="text"
@@ -244,7 +278,7 @@ class EditUser extends Component {
                                             name="en_name"
                                             variant="outlined"
                                             fullWidth
-                                            
+                                            error={errors.en_name}
                                             value={ _.get(content,"en_name","")}
                                             onChange={this.handleOnChange}
                                             type="text"
@@ -266,6 +300,7 @@ class EditUser extends Component {
                                             name="email"
                                             variant="outlined"
                                             fullWidth
+                                            error={errors.email}
                                             value={ _.get(content,"email","")}
                                             onChange={this.handleOnChange}
                                             type="email"
@@ -285,6 +320,7 @@ class EditUser extends Component {
                                             name="mobile"
                                             variant="outlined"
                                             fullWidth
+                                            error={errors.mobile}
                                             value={ _.get(content,"mobile","")}
                                             onChange={this.handleOnChange}
                                             type="text"
@@ -304,6 +340,7 @@ class EditUser extends Component {
                                             name="user_name"
                                             variant="outlined"
                                             fullWidth
+                                            error={errors.user_name}
                                             value={ _.get(content,"user_name","")}
                                             onChange={this.handleOnChange}
                                             type="text"
@@ -324,6 +361,7 @@ class EditUser extends Component {
                                             name="user_group_id"
                                             value={ content.user_group_id }
                                             required
+                                            error={errors.user_group_id}
                                             onChange={this.handleOnChange}
                                             className="form-input"
                                         />
@@ -337,6 +375,7 @@ class EditUser extends Component {
                                             name="password"
                                             variant="outlined"
                                             fullWidth
+                                            error={errors.password}
                                             value={ _.get(content,"password","")}
                                             onChange={this.handleOnChange}
                                             type="password"
@@ -356,6 +395,7 @@ class EditUser extends Component {
                                             name="password_confirmation"
                                             variant="outlined"
                                             fullWidth
+                                            error={errors.password_confirmation}
                                             required={content.password}
                                             value={ _.get(content,"password_confirmation","")}
                                             onChange={this.handleOnChange}
@@ -377,6 +417,7 @@ class EditUser extends Component {
                                                 control={
                                                     <Checkbox 
                                                         checked={content.is_actived} 
+                                                        error={errors.is_actived}
                                                         onChange={this.handleOnChecked("is_actived")} 
                                                     />
                                                 }
@@ -391,6 +432,7 @@ class EditUser extends Component {
                             <Grid container>
                                 <Grid item sm={12} xs={12} style={{textAlign:"right"}}>
                                     <FormButtonGroup
+                                        allowSave={allowSave}
                                         onCancel={(e) => {
                                             e.preventDefault()
                                             window.location.href="/users"

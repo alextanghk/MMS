@@ -7,7 +7,7 @@ import Loader from '../../components/Loader';
 import Alert from '../../components/Alert';
 
 const AccountSelector = (props) => {
-    const { name, value, onChange, required, className="", disabled=false } = props;
+    const { name, value, onChange, required, className="", disabled=false, error=false } = props;
     const [options, setOptions] = useState([]);
 
     const [paging, setPaging] = useState({
@@ -36,6 +36,7 @@ const AccountSelector = (props) => {
         <Select
             variant="outlined"
             fullWidth
+            error
             className={className}
             name={name}
             value={value}

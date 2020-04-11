@@ -2,8 +2,8 @@ class Api::V1::AccessRightsController < Api::V1::ApplicationController
     before_action :user_authorize_request
 
     def list
-        items = AccessRight.active.where(is_display: true).order(function: :asc, category: :asc, weight: :asc)
-        items = items.order("function asc", "category asc","weight asc")
+        items = AccessRight.active.where(is_display: true).order(func_weight: :asc, cat_weight: :asc, weight: :asc)
+        items = items.order("func_weight asc", "cat_weight asc","weight asc")
         render json: {
             message: "success",
             error: nil,

@@ -21,6 +21,8 @@ class Api::V1::UsersController < Api::V1::ApplicationController
                 item
             }
         }
+    rescue ActiveRecord::SecurityTransgression => e
+        render json: { message: "user_access_deined", error: "user_access_deined" }, status: :forbidden
     rescue => e
         render json: { message: "system_error", error: e.message }, status: :internal_server_error
     end
@@ -34,10 +36,12 @@ class Api::V1::UsersController < Api::V1::ApplicationController
             error: nil,
             data: item
         }
-        rescue ActiveRecord::RecordNotFound => e
-            render json: { message: "data_not_found", error: "data_not_found" }, status: :not_found
-        rescue => e
-            render json: { message: "system_error", error: e.message }, status: :internal_server_error
+    rescue ActiveRecord::RecordNotFound => e
+        render json: { message: "data_not_found", error: "data_not_found" }, status: :not_found
+    rescue ActiveRecord::SecurityTransgression => e
+        render json: { message: "user_access_deined", error: "user_access_deined" }, status: :forbidden
+    rescue => e
+        render json: { message: "system_error", error: e.message }, status: :internal_server_error
     end
 
     def get
@@ -50,14 +54,16 @@ class Api::V1::UsersController < Api::V1::ApplicationController
             error: nil,
             data: ReturnFormat(item)
         }
-        rescue ActiveRecord::RecordNotFound => e
-            render json: { message: "data_not_found", error: "data_not_found" }, status: :not_found
-        rescue => e
-            render json: { message: "system_error", error: e.message }, status: :internal_server_error
+    rescue ActiveRecord::RecordNotFound => e
+        render json: { message: "data_not_found", error: "data_not_found" }, status: :not_found
+    rescue ActiveRecord::SecurityTransgression => e
+        render json: { message: "user_access_deined", error: "user_access_deined" }, status: :forbidden
+    rescue => e
+        render json: { message: "system_error", error: e.message }, status: :internal_server_error
     end
 
     def create
-        form = params.permit(:zh_name,:en_name,:user_name,:email,:mobile,:user_group_id,:password,:password_confirmation)
+        form = params.permit(:zh_name,:en_name,:user_name,:email,:mobile,:user_group_id,:password,:password_confirmation, :is_actived)
 
         item = User.new(form)
         raise SecurityTransgression unless @current_user.can_create?(item)
@@ -77,9 +83,10 @@ class Api::V1::UsersController < Api::V1::ApplicationController
             error: nil,
             data: ReturnFormat(item)
         }
-
-        rescue => e
-            render json: { message: "system_error", error: e.message }, status: :internal_server_error
+    rescue ActiveRecord::SecurityTransgression => e
+        render json: { message: "user_access_deined", error: "user_access_deined" }, status: :forbidden
+    rescue => e
+        render json: { message: "system_error", error: e.message }, status: :internal_server_error
     end
 
     def update
@@ -87,7 +94,7 @@ class Api::V1::UsersController < Api::V1::ApplicationController
         item = User.active.find(id.to_i)
         raise SecurityTransgression unless @current_user.can_update?(item)
 
-        form = params.permit(:zh_name,:en_name,:email,:mobile,:user_group_id,:password,:password_confirmation)
+        form = params.permit(:zh_name,:en_name,:email,:mobile,:user_group_id,:password,:password_confirmation, :is_actived)
         item.assign_attributes(form)
         if !item.valid?
             render status:500, json: {
@@ -106,6 +113,8 @@ class Api::V1::UsersController < Api::V1::ApplicationController
         }
     rescue ActiveRecord::RecordNotFound => e
         render json: { message: "data_not_found", error: "data_not_found" }, status: :not_found
+    rescue ActiveRecord::SecurityTransgression => e
+        render json: { message: "user_access_deined", error: "user_access_deined" }, status: :forbidden
     rescue => e
         render json: { message: "system_error", error: e.message }, status: :internal_server_error
     end
@@ -132,6 +141,8 @@ class Api::V1::UsersController < Api::V1::ApplicationController
         }
     rescue ActiveRecord::RecordNotFound => e
         render json: { message: "data_not_found", error: "data_not_found" }, status: :not_found
+    rescue ActiveRecord::SecurityTransgression => e
+        render json: { message: "user_access_deined", error: "user_access_deined" }, status: :forbidden
     rescue => e
         render json: { message: "system_error", error: e.message }, status: :internal_server_error
     end
@@ -155,6 +166,8 @@ class Api::V1::UsersController < Api::V1::ApplicationController
         }
     rescue ActiveRecord::RecordNotFound => e
         render json: { message: "data_not_found", error: "data_not_found" }, status: :not_found
+    rescue ActiveRecord::SecurityTransgression => e
+        render json: { message: "user_access_deined", error: "user_access_deined" }, status: :forbidden
     rescue => e
         render json: { message: "system_error", error: e.message }, status: :internal_server_error
     end

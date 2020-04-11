@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Grid, Card, CardHeader,CardContent, IconButton, Button, ButtonGroup } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/Edit';
+import VisibilityIcon from '@material-ui/icons/Visibility';
 import DataTable from '../../components/DataTable';
 import Breadcrumbs from '../../components/Breadcrumbs';
 import SearchBox from '../../components/SearchBox';
@@ -125,7 +126,7 @@ const Registrations = props => {
                                     (row) => {
                                         return(<Fragment>
                                             <IconButton aria-label="settings" href={`/registrations/edit/${row.id}`}>
-                                                <EditIcon />
+                                            { global.Accessible("PUT_REGISTRATION") ? <EditIcon/> : <VisibilityIcon /> }
                                             </IconButton>
                                         </Fragment>)
                                     }

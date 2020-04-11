@@ -140,6 +140,11 @@ class EditClaims extends Component {
         let errors = {};
         if (!values.invoice_number) errors.invoice_number = t("field_error_required");
         if (!values.item_name) errors.item_name = t("field_error_required");
+        if (!values.item_type) errors.item_type = t("field_error_required");
+        if (!values.provider) errors.provider = t("field_error_required");
+        if (!values.paid_by) errors.paid_by = t("field_error_required");
+        if (!values.paid_at) errors.paid_at = t("field_error_required");
+        if (values.amount == "") errors.amount = t("field_error_required");
 
         this.setState(prevState => ({
             ...prevState,
@@ -509,6 +514,13 @@ class EditClaims extends Component {
         const { match: { params } } = this.props;
         const { id } = params;
 
+        let allowSave = true;
+        if (id === undefined) {
+            allowSave = global.Accessible("POST_CLAIM");
+        } else {
+            allowSave = global.Accessible("PUT_CLAIM");
+        }
+
         return (<Fragment>
             <Helmet>
                 <title>{ `${t("lb_claims")} - ${process.env.REACT_APP_TITLE}` }</title>
@@ -537,7 +549,7 @@ class EditClaims extends Component {
                                                 name="invoice_number"
                                                 variant="outlined"
                                                 fullWidth
-                                                
+                                                error={_.get(errors, "invoice_number","") != ""}
                                                 value={ _.get(content,"invoice_number","")}
                                                 onChange={this.handleOnChange}
                                                 type="text"
@@ -559,7 +571,7 @@ class EditClaims extends Component {
                                                 name="provider"
                                                 variant="outlined"
                                                 fullWidth
-                                                
+                                                error={_.get(errors, "provider","") != ""}
                                                 value={ _.get(content,"provider","")}
                                                 onChange={this.handleOnChange}
                                                 type="text"
@@ -582,6 +594,7 @@ class EditClaims extends Component {
                                                 variant="outlined"
                                                 fullWidth
                                                 multiline
+                                                error={_.get(errors, "item_name","") != ""}
                                                 value={ _.get(content,"item_name","")}
                                                 onChange={this.handleOnChange}
                                                 type="text"
@@ -603,7 +616,7 @@ class EditClaims extends Component {
                                                 name="item_type"
                                                 variant="outlined"
                                                 fullWidth
-                                                
+                                                error={_.get(errors, "item_type","") != ""}
                                                 value={ _.get(content,"item_type","")}
                                                 onChange={this.handleOnChange}
                                                 type="text"
@@ -625,6 +638,7 @@ class EditClaims extends Component {
                                                 name="payment_method"
                                                 variant="outlined"
                                                 fullWidth
+                                                error={_.get(errors, "payment_method","") != ""}
                                                 error={ errors.payment_method }
                                                 onChange={this.handleOnChange}
                                                 inputProps={{
@@ -653,6 +667,7 @@ class EditClaims extends Component {
                                                 value={ _.get(content,"amount","")}
                                                 onChange={this.handleOnChange}
                                                 type="number"
+                                                error={_.get(errors, "amount","") != ""}
                                                 helperText={_.get(errors, "amount","")}
                                                 required
                                                 inputProps={{
@@ -673,6 +688,7 @@ class EditClaims extends Component {
                                                 name="paid_by"
                                                 variant="outlined"
                                                 fullWidth
+                                                error={_.get(errors, "paid_by","") != ""}
                                                 value={ _.get(content,"paid_by","")}
                                                 onChange={this.handleOnChange}
                                                 type="text"
@@ -697,6 +713,7 @@ class EditClaims extends Component {
                                                 required
                                                 inputVariant="outlined"
                                                 onChange={ this.handleOnDateChange('paid_at') }
+                                                error={_.get(errors, "paid_at","") != ""}
                                                 maxDate={new Date()}
                                                 format="YYYY-MM-DD"
                                                 InputAdornmentProps={{position: "end"}}
@@ -717,6 +734,7 @@ class EditClaims extends Component {
                                                 name="approved_by"
                                                 variant="outlined"
                                                 fullWidth
+                                                error={_.get(errors, "approved_by","") != ""}
                                                 value={ _.get(content,"approved_by","")}
                                                 onChange={this.handleOnChange}
                                                 type="text"
@@ -737,6 +755,7 @@ class EditClaims extends Component {
                                                 value={_.get(content,"approved_at", null)}
                                                 placeholder=""
                                                 inputVariant="outlined"
+                                                error={_.get(errors, "approved_at","") != ""}
                                                 onChange={ this.handleOnDateChange('approved_at') }
                                                 maxDate={new Date()}
                                                 format="YYYY-MM-DD"
@@ -760,6 +779,7 @@ class EditClaims extends Component {
                                                 fullWidth
                                                 value={ _.get(content,"handled_by","")}
                                                 onChange={this.handleOnChange}
+                                                error={_.get(errors, "handled_by","") != ""}
                                                 type="text"
                                                 helperText={_.get(errors, "handled_by","")}
                                                 inputProps={{
@@ -780,6 +800,7 @@ class EditClaims extends Component {
                                                 inputVariant="outlined"
                                                 onChange={ this.handleOnDateChange('handled_at') }
                                                 maxDate={new Date()}
+                                                error={_.get(errors, "handled_at","") != ""}
                                                 format="YYYY-MM-DD"
                                                 InputAdornmentProps={{position: "end"}}
                                                 className="datePicker"
@@ -802,6 +823,7 @@ class EditClaims extends Component {
                                                 inputVariant="outlined"
                                                 onChange={ this.handleOnDateChange('transaction_date') }
                                                 maxDate={new Date()}
+                                                error={_.get(errors, "transaction_date","") != ""}
                                                 format="YYYY-MM-DD"
                                                 InputAdornmentProps={{position: "end"}}
                                                 className="datePicker"
@@ -822,10 +844,12 @@ class EditClaims extends Component {
                                             <FileUpload 
                                                 value={ _.get(content,"receipt","")}
                                                 onChange={this.handleOnUpload} 
+                                                error={_.get(errors, "receipt_file","") != ""}
                                                 name="receipt_file"
                                                 deletedField="delete_receipt"
                                                 disabled={content.is_approved}
                                             />
+                                            <FormHelperText className="error">{_.get(errors, "receipt_file","")}</FormHelperText>
                                         </FormItemContainer>
                                     </Grid>
                                     <Grid item md={5} spacing={1}>
@@ -836,6 +860,7 @@ class EditClaims extends Component {
                                                 name="description"
                                                 variant="outlined"
                                                 fullWidth
+                                                error={_.get(errors, "description","") != ""}
                                                 value={ _.get(content,"description","")}
                                                 onChange={this.handleOnChange}
                                                 type="text"
@@ -856,7 +881,7 @@ class EditClaims extends Component {
                                 <Grid container>
                                     <Grid item sm={6} xs={6}>
                                     {
-                                        (id !== undefined && content.is_approved && !content.is_handled) && <Button 
+                                        (id !== undefined && content.is_approved && !content.is_handled && global.Accessible("HANDLE_CLAIM")) && <Button 
                                             onClick={this.handleOnHandle}
                                             color="primary"
                                             size="middle"
@@ -869,7 +894,7 @@ class EditClaims extends Component {
                                         </Button>
                                     }
                                     {
-                                        (id !== undefined && !content.is_approved) && <Button 
+                                        (id !== undefined && !content.is_approved && global.Accessible("APPROVE_CLAIM") ) && <Button 
                                             onClick={this.handleOnApprove}
                                             color="primary"
                                             size="middle"
@@ -882,7 +907,7 @@ class EditClaims extends Component {
                                         </Button>
                                     }
                                     {
-                                        (id !== undefined && content.status == "New") && <Button 
+                                        (id !== undefined && content.status == "New" && global.Accessible("REJECT_CLAIM")) && <Button 
                                             onClick={this.handleOnReject}
                                             color="secondary"
                                             size="middle"
@@ -908,6 +933,7 @@ class EditClaims extends Component {
                                     </Grid>
                                     <Grid item sm={6} xs={6} style={{textAlign:"right"}}>
                                         <FormButtonGroup
+                                            allowSave={allowSave}
                                             onCancel={(e) => {
                                                 e.preventDefault()
                                                 window.location.href="/claims"

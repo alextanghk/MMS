@@ -108,8 +108,18 @@ class Profile extends Component {
             errors: {}
         })
         let errors = {};
-        // if (!values.zh_surname) errors.zh_surname = t("field_error_required");
-       
+        if (!values.zh_name) errors.zh_name = t("field_error_required");
+        if (!values.en_name) errors.en_name = t("field_error_required");
+        if (!values.email) errors.email = t("field_error_required");
+
+        if (values.password) {
+            if (!values.password_confirmation) {
+                errors.password_confirmation = t("field_error_required");
+            } else if (values.password != values.password_confirmation) {
+                errors.password_confirmation = t("field_password_confirmation_not_match");
+            }
+        }
+
         this.setState(prevState => ({
             ...prevState,
             ["errors"]: errors
@@ -216,7 +226,7 @@ class Profile extends Component {
                                             name="zh_name"
                                             variant="outlined"
                                             fullWidth
-                                            
+                                            error={errors.zh_name}
                                             value={ _.get(content,"zh_name","")}
                                             onChange={this.handleOnChange}
                                             type="text"
@@ -237,7 +247,7 @@ class Profile extends Component {
                                             name="en_name"
                                             variant="outlined"
                                             fullWidth
-                                            
+                                            error={errors.en_name}
                                             value={ _.get(content,"en_name","")}
                                             onChange={this.handleOnChange}
                                             type="text"
@@ -259,6 +269,7 @@ class Profile extends Component {
                                             name="email"
                                             variant="outlined"
                                             fullWidth
+                                            error={errors.email}
                                             value={ _.get(content,"email","")}
                                             onChange={this.handleOnChange}
                                             type="email"
@@ -279,6 +290,7 @@ class Profile extends Component {
                                             name="mobile"
                                             variant="outlined"
                                             fullWidth
+                                            error={errors.mobile}
                                             value={ _.get(content,"mobile","")}
                                             onChange={this.handleOnChange}
                                             type="text"
@@ -299,13 +311,15 @@ class Profile extends Component {
                                             name="user_name"
                                             variant="outlined"
                                             fullWidth
+                                            error={errors.user_name}
                                             value={ _.get(content,"user_name","")}
-                                            onChange={this.handleOnChange}
+                                            // onChange={this.handleOnChange}
                                             type="text"
                                             helperText={_.get(errors, "user_name","")}
                                             required
                                             inputProps={{
-                                                className:"form-input"
+                                                className:"form-input",
+                                                readOnly:true
                                             }}
                                         />
                                     </FormItemContainer>
@@ -321,6 +335,7 @@ class Profile extends Component {
                                             name="password"
                                             variant="outlined"
                                             fullWidth
+                                            error={errors.password}
                                             value={ _.get(content,"password","")}
                                             onChange={this.handleOnChange}
                                             type="password"
@@ -340,6 +355,7 @@ class Profile extends Component {
                                             name="password_confirmation"
                                             variant="outlined"
                                             fullWidth
+                                            error={errors.password_confirmation}
                                             required={content.password}
                                             value={ _.get(content,"password_confirmation","")}
                                             onChange={this.handleOnChange}

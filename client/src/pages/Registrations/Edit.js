@@ -173,11 +173,10 @@ class EditRegistration extends Component {
         if (!values.job_title) errors.job_title = t("field_error_required");
         if (!values.office_address) errors.office_address = t("field_error_required");
         
-        if (!values.office_phone) 
+        if (!values.office_phone && (!values.proof && !values.proof_file)) 
         {
-            if (!values.proof && !values.proof_file) {
-                errors.office_phone = t("field_error_required");
-            }
+            errors.office_phone = t("field_phone_or_proof");
+            errors.proof_file = t("field_phone_or_proof");
         }
         if (!values.employment_terms) errors.employment_terms = t("field_error_required");
         if (!values.declare) errors.declare = t("field_error_required");
@@ -473,6 +472,17 @@ class EditRegistration extends Component {
         const { t, i18n } = this.props;
         const { match: { params } } = this.props;
         const { id } = params;
+        let allowSave = true;
+        if (id === undefined) {
+            allowSave = global.Accessible("POST_REGISTRATION");
+        } else {
+            allowSave = global.Accessible("PUT_REGISTRATION");
+        }
+
+        if (content.status == "Completed") {
+            allowSave = global.Accessible("UPDATE_REGISTRATION_AFTER_APPROVED");
+        }
+
         return (<Fragment>
             <Helmet>
                 <title>{ `${t("lb_registrations")} - ${process.env.REACT_APP_TITLE}` }</title>
@@ -650,24 +660,28 @@ class EditRegistration extends Component {
                                                 value={_.get(content,"gender", null)}
                                                 onChange={this.handleOnChange}
                                                 row
+                                                error={ errors.gender }
                                             >
                                                 <FormControlLabel
                                                     value="F"
                                                     control={<Radio color="primary" />}
                                                     label={ t('radio_female') }
                                                     labelPlacement="end"
+                                                    error={ errors.gender }
                                                 />
                                                 <FormControlLabel
                                                     value="M"
                                                     control={<Radio color="primary" />}
                                                     label={ t('radio_male') }
                                                     labelPlacement="end"
+                                                    error={ errors.gender }
                                                 />
                                                 <FormControlLabel
                                                     value="O"
                                                     control={<Radio color="primary" />}
                                                     label={ t('radio_other') }
                                                     labelPlacement="end"
+                                                    error={ errors.gender }
                                                 />
                                             </RadioGroup>
                                             <FormHelperText className="error">{_.get(errors, "gender","")}</FormHelperText>
@@ -852,24 +866,19 @@ class EditRegistration extends Component {
                                         <FormItemContainer
                                             label={ `${t('input_status')}:` }
                                         >
-                                            <Select
-                                                value={ _.get(content,"status","")}
+                                            <TextField
                                                 name="status"
                                                 variant="outlined"
                                                 fullWidth
                                                 error={ errors.status }
-                                                onChange={this.handleOnChange}
+                                                value={ _.get(content,"status","")}
+                                                type="text"
+                                                helperText={_.get(errors, "status","")}
                                                 inputProps={{
                                                     className:"form-input",
                                                     readOnly: true
                                                 }}
-                                            >
-                                                <MenuItem value="New">New</MenuItem>
-                                                <MenuItem value="Completed">Completed</MenuItem>
-                                                <MenuItem value="Withdraw">Withdraw</MenuItem>
-                                                <MenuItem value="Cancelled">Cancelled</MenuItem>
-                                            </Select>
-                                            <FormHelperText className="error">{_.get(errors, "status","")}</FormHelperText>
+                                            />
                                         </FormItemContainer>
                                     </Grid>
                                     <Grid item md={5} spacing={1}></Grid>
@@ -1072,44 +1081,49 @@ class EditRegistration extends Component {
                                 <Grid container>
                                     <Grid item sm={6} xs={6}>
                                     {
-                                        (id !== undefined && content.status != "Completed") && <Button 
-                                                onClick={this.handleOnApprove}
-                                                color="primary"
-                                                size="middle"
-                                                variant="contained"
-                                                style={{
-                                                    marginRight: "15px"
-                                                }}
-                                            >
-                                            Approve
-                                        </Button>
-                                    }
-                                    {
-                                        (id !== undefined && content.status != "Cancelled") && <Button 
-                                                onClick={this.handleOnCancel}
-                                                color="secondary"
-                                                size="middle"
-                                                variant="contained"
-                                                style={{
-                                                    marginRight: "15px"
-                                                }}
-                                            >
-                                            Cancelled
-                                        </Button>
-                                    }
-                                    {
-                                        (id !== undefined && content.status != "Withdraw") && <Button 
-                                                onClick={this.handleOnWithdraw}
-                                                color="inherit"
-                                                size="middle"
-                                                variant="contained"
-                                            >
-                                            Withdraw
-                                        </Button>
+                                        id !== undefined && <Fragment>
+                                            {
+                                                (content.status != "Completed" && global.Accessible("APPROVE_REGISTRATION")) && <Button 
+                                                        onClick={this.handleOnApprove}
+                                                        color="primary"
+                                                        size="middle"
+                                                        variant="contained"
+                                                        style={{
+                                                            marginRight: "15px"
+                                                        }}
+                                                    >
+                                                    Approve
+                                                </Button>
+                                            }
+                                            {
+                                                (content.status != "Cancelled" && global.Accessible("CANCEL_REGISTRATION")) && <Button 
+                                                        onClick={this.handleOnCancel}
+                                                        color="secondary"
+                                                        size="middle"
+                                                        variant="contained"
+                                                        style={{
+                                                            marginRight: "15px"
+                                                        }}
+                                                    >
+                                                    Cancelled
+                                                </Button>
+                                            }
+                                            {
+                                                (content.status != "Withdraw" && global.Accessible("WITHDRAW_REGISTRATION")) && <Button 
+                                                        onClick={this.handleOnWithdraw}
+                                                        color="inherit"
+                                                        size="middle"
+                                                        variant="contained"
+                                                    >
+                                                    Withdraw
+                                                </Button>
+                                            }
+                                        </Fragment>
                                     }
                                     </Grid>
                                     <Grid item sm={6} xs={6} style={{textAlign:"right"}}>
                                         <FormButtonGroup
+                                            allowSave={allowSave}
                                             onCancel={(e) => {
                                                 e.preventDefault()
                                                 window.location.href="/registrations"

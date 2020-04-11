@@ -164,6 +164,13 @@ class EditMember extends Component {
         if (!values.office_address) errors.office_address = t("field_error_required");
         if (!values.employment_terms) errors.employment_terms = t("field_error_required");
 
+        if (values.password) {
+            if (!values.password_confirmation) {
+                errors.password_confirmation = t("field_error_required");
+            } else if (values.password != values.password_confirmation) {
+                errors.password_confirmation = t("field_password_confirmation_not_match");
+            }
+        }
         this.setState(prevState => ({
             ...prevState,
             ["errors"]: errors
@@ -255,6 +262,13 @@ class EditMember extends Component {
         const { t, i18n } = this.props;
         const { match: { params } } = this.props;
         const { id } = params;
+
+        let allowSave = true;
+        if (id === undefined) {
+            allowSave = global.Accessible("POST_MEMBER");
+        } else {
+            allowSave = global.Accessible("PUT_MEMBER");
+        }
         
         return (<Fragment>
             <Helmet>
@@ -284,7 +298,7 @@ class EditMember extends Component {
                                                 name="zh_surname"
                                                 variant="outlined"
                                                 fullWidth
-                                                
+                                                error={errors.zh_surname}
                                                 value={ _.get(content,"zh_surname","")}
                                                 onChange={this.handleOnChange}
                                                 type="text"
@@ -305,7 +319,7 @@ class EditMember extends Component {
                                                 name="zh_first_name"
                                                 variant="outlined"
                                                 fullWidth
-                                                
+                                                error={errors.zh_first_name}
                                                 value={ _.get(content,"zh_first_name","")}
                                                 onChange={this.handleOnChange}
                                                 type="text"
@@ -326,7 +340,7 @@ class EditMember extends Component {
                                                 name="en_surname"
                                                 variant="outlined"
                                                 fullWidth
-                                                
+                                                error={errors.en_surname}
                                                 value={ _.get(content,"en_surname","")}
                                                 onChange={this.handleOnChange}
                                                 type="text"
@@ -347,7 +361,7 @@ class EditMember extends Component {
                                                 name="en_first_name"
                                                 variant="outlined"
                                                 fullWidth
-                                                
+                                                error={errors.en_first_name}
                                                 value={ _.get(content,"en_first_name","")}
                                                 onChange={this.handleOnChange}
                                                 type="text"
@@ -368,7 +382,7 @@ class EditMember extends Component {
                                                 name="email"
                                                 variant="outlined"
                                                 fullWidth
-                                                
+                                                error={errors.email}
                                                 value={ _.get(content,"email","")}
                                                 onChange={this.handleOnChange}
                                                 type="email"
@@ -389,7 +403,7 @@ class EditMember extends Component {
                                                 name="mobile"
                                                 variant="outlined"
                                                 fullWidth
-                                                
+                                                error={errors.mobile}
                                                 value={ _.get(content,"mobile","")}
                                                 onChange={this.handleOnChange}
                                                 type="phone"
@@ -410,7 +424,7 @@ class EditMember extends Component {
                                                 name="home_address"
                                                 variant="outlined"
                                                 fullWidth
-                                                
+                                                error={errors.home_address}
                                                 value={ _.get(content,"home_address","")}
                                                 onChange={this.handleOnChange}
                                                 type="text"
@@ -430,6 +444,7 @@ class EditMember extends Component {
                                             <RadioGroup aria-label="gender" name="gender" 
                                                 value={_.get(content,"gender", null)}
                                                 onChange={this.handleOnChange}
+                                                error={errors.gender}
                                                 row
                                             >
                                                 <FormControlLabel
@@ -437,20 +452,24 @@ class EditMember extends Component {
                                                     control={<Radio color="primary" />}
                                                     label={ t('radio_female') }
                                                     labelPlacement="end"
+                                                    error={errors.gender}
                                                 />
                                                 <FormControlLabel
                                                     value="M"
                                                     control={<Radio color="primary" />}
                                                     label={ t('radio_male') }
                                                     labelPlacement="end"
+                                                    error={errors.gender}
                                                 />
                                                 <FormControlLabel
                                                     value="O"
                                                     control={<Radio color="primary" />}
                                                     label={ t('radio_other') }
                                                     labelPlacement="end"
+                                                    error={errors.gender}
                                                 />
                                             </RadioGroup>
+                                            <FormHelperText className="error">{_.get(errors, "gender","")}</FormHelperText>
                                         </FormItemContainer>
                                     </Grid>
                                     <Grid item md={5} spacing={1}>
@@ -469,6 +488,7 @@ class EditMember extends Component {
                                                 onChange={ this.handleOnDateChange('dob') }
                                                 maxDate={new Date()}
                                                 format="YYYY-MM-DD"
+                                                error={errors.dob}
                                                 InputAdornmentProps={{position: "end"}}
                                                 className="datePicker"
                                                 inputProps={{
@@ -487,7 +507,7 @@ class EditMember extends Component {
                                                 name="hkid"
                                                 variant="outlined"
                                                 fullWidth
-                                                
+                                                error={errors.hkid}
                                                 value={ _.get(content,"hkid","")}
                                                 onChange={this.handleOnChange}
                                                 type="text"
@@ -507,6 +527,7 @@ class EditMember extends Component {
                                                 name="emergency_contact"
                                                 variant="outlined"
                                                 fullWidth
+                                                error={errors.emergency_contact}
                                                 value={ _.get(content,"emergency_contact","")}
                                                 onChange={this.handleOnChange}
                                                 type="text"
@@ -525,6 +546,7 @@ class EditMember extends Component {
                                                 name="emergency_relation"
                                                 variant="outlined"
                                                 fullWidth
+                                                error={errors.emergency_relation}
                                                 value={ _.get(content,"emergency_relation","")}
                                                 onChange={this.handleOnChange}
                                                 type="text"
@@ -543,6 +565,7 @@ class EditMember extends Component {
                                                 name="emergency_number"
                                                 variant="outlined"
                                                 fullWidth
+                                                error={errors.emergency_number}
                                                 value={ _.get(content,"emergency_number","")}
                                                 onChange={this.handleOnChange}
                                                 type="text"
@@ -562,7 +585,7 @@ class EditMember extends Component {
                                                 name="comnpany"
                                                 variant="outlined"
                                                 fullWidth
-                                                
+                                                error={errors.comnpany}
                                                 value={ _.get(content,"comnpany","")}
                                                 onChange={this.handleOnChange}
                                                 type="text"
@@ -583,7 +606,7 @@ class EditMember extends Component {
                                                 name="office_address"
                                                 variant="outlined"
                                                 fullWidth
-                                                
+                                                error={errors.office_address}
                                                 value={ _.get(content,"office_address","")}
                                                 onChange={this.handleOnChange}
                                                 type="text"
@@ -607,6 +630,7 @@ class EditMember extends Component {
                                                 value={ _.get(content,"job_title","")}
                                                 onChange={this.handleOnChange}
                                                 type="text"
+                                                error={errors.job_title}
                                                 helperText={_.get(errors, "job_title","")}
                                                 required
                                                 inputProps={{
@@ -625,6 +649,7 @@ class EditMember extends Component {
                                                 name="employment_terms"
                                                 variant="outlined"
                                                 fullWidth
+                                                error={errors.employment_terms}
                                                 onChange={this.handleOnChange}
                                                 inputProps={{
                                                     className:"form-input"
@@ -649,6 +674,7 @@ class EditMember extends Component {
                                                 name="office_phone"
                                                 variant="outlined"
                                                 fullWidth
+                                                error={errors.office_phone}
                                                 value={ _.get(content,"office_phone","")}
                                                 onChange={this.handleOnChange}
                                                 type="text"
@@ -671,6 +697,7 @@ class EditMember extends Component {
                                                 value={ _.get(content,"department","")}
                                                 onChange={this.handleOnChange}
                                                 type="text"
+                                                error={errors.department}
                                                 helperText={_.get(errors, "department","")}
                                                 inputProps={{
                                                     className:"form-input"
@@ -688,8 +715,10 @@ class EditMember extends Component {
                                                 value={ _.get(content,"profile","")}
                                                 onChange={this.handleOnUpload} 
                                                 name="profile_file"
+                                                error={errors.profile_file}
                                                 deletedField="delete_profile"
                                             />
+                                            <FormHelperText className="error">{_.get(errors, "profile_file","")}</FormHelperText>
                                         </FormItemContainer>
                                     </Grid>
                                     <Grid item md={5} spacing={1}>
@@ -703,6 +732,7 @@ class EditMember extends Component {
                                                 value={ _.get(content,"remark","")}
                                                 onChange={this.handleOnChange}
                                                 type="text"
+                                                error={errors.remark}
                                                 helperText={_.get(errors, "remark","")}
                                                 multiline
                                                 inputProps={{
@@ -724,6 +754,7 @@ class EditMember extends Component {
                                                 value={ _.get(content,"member_ref","")}
                                                 onChange={this.handleOnChange}
                                                 type="text"
+                                                error={errors.member_ref}
                                                 helperText={_.get(errors, "member_ref","")}
                                                 inputProps={{
                                                     className:"form-input",
@@ -740,6 +771,7 @@ class EditMember extends Component {
                                                 checked={content.is_actived} 
                                                 onChange={this.handleOnChecked("is_actived")} 
                                                 name="is_actived"
+                                                error={errors.is_actived}
                                                 inputProps={{ 'aria-label': 'primary checkbox' }}
                                             />
                                             <FormHelperText className="error">{_.get(errors, "is_actived","")}</FormHelperText>
@@ -756,6 +788,7 @@ class EditMember extends Component {
                                                 value={ _.get(content,"password","")}
                                                 onChange={this.handleOnChange}
                                                 type="password"
+                                                error={errors.password}
                                                 helperText={_.get(errors, "password","")}
                                                 inputProps={{
                                                     className:"form-input"
@@ -776,6 +809,7 @@ class EditMember extends Component {
                                                 value={ _.get(content,"password_confirmation","")}
                                                 onChange={this.handleOnChange}
                                                 type="password"
+                                                error={errors.password_confirmation}
                                                 helperText={_.get(errors, "password_confirmation","")}
                                                 inputProps={{
                                                     className:"form-input"
@@ -791,6 +825,7 @@ class EditMember extends Component {
                                                 checked={content.sent_confirmation} 
                                                 onChange={this.handleOnChecked("subscription")} 
                                                 name="subscription"
+                                                error={errors.subscription}
                                                 inputProps={{ 'aria-label': 'primary checkbox' }}
                                             />
                                             <FormHelperText className="error">{_.get(errors, "subscription","")}</FormHelperText>
@@ -804,6 +839,7 @@ class EditMember extends Component {
                                                 checked={content.sent_confirmation} 
                                                 onChange={this.handleOnChecked("sent_group_invite")} 
                                                 name="sent_group_invite"
+                                                error={errors.sent_group_invite}
                                                 inputProps={{ 'aria-label': 'primary checkbox' }}
                                             />
                                             <FormHelperText className="error">{_.get(errors, "sent_group_invite","")}</FormHelperText>
@@ -815,6 +851,7 @@ class EditMember extends Component {
                                 <Grid container>
                                     <Grid item sm={12} xs={12} style={{textAlign:"right"}}>
                                         <FormButtonGroup
+                                            allowSave={allowSave}
                                             onCancel={(e) => {
                                                 e.preventDefault()
                                                 window.location.href="/members"

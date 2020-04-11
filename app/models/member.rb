@@ -44,7 +44,7 @@ class Member < ApplicationRecord
     validates :password, confirmation: { message: "field_error_confirmation"}, unless: Proc.new { |a| a.password.blank? }
     validates :password_confirmation, presence: { message: "field_error_required"}, unless: Proc.new { |a| a.password.blank? }
     validates :password, presence: { message: "field_error_required"}, on: :create
-    validates :password, length: { minimum: 8, message: "field_error_length" }, unless: Proc.new { |a| a.password.blank? }
+    validates :password, length: { minimum: 8, message: "field_error_password_length" }, unless: Proc.new { |a| a.password.blank? }
 
     Paperclip.interpolates :uuid do |attachment, style|
         attachment.instance.uuid

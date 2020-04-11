@@ -157,8 +157,15 @@ class EditAccount extends Component {
                 }
             });
         }).catch((err)=>{
-            const message = _.get(err,'message',err);
-
+            const { message = "", error = null } = err;
+            if (error != null) {
+                this.setState({
+                    errors: _.reduce(error,(r,v,k) =>{
+                        r[k] = t(_.get(v,"0",""));
+                        return r;
+                    },{})
+                })
+            }
             toast.error(message ? t(message) : t("system_error"), {
                 position: "top-right",
                 autoClose: 5000,
@@ -180,6 +187,13 @@ class EditAccount extends Component {
         const { t, i18n } = this.props;
         const { match: { params } } = this.props;
         const { id } = params;
+
+        let allowSave = true;
+        if (id === undefined) {
+            allowSave = global.Accessible("POST_ACCOUNT");
+        } else {
+            allowSave = global.Accessible("PUT_ACCOUNT");
+        }
 
         return (<Fragment>
             <Helmet>
@@ -279,6 +293,7 @@ class EditAccount extends Component {
                             <Grid container>
                                 <Grid item sm={12} xs={12} style={{textAlign:"right"}}>
                                     <FormButtonGroup
+                                        allowSave={ allowSave }
                                         onCancel={(e) => {
                                             e.preventDefault()
                                             window.location.href="/accounts"

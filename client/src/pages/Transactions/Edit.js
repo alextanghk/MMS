@@ -130,6 +130,10 @@ class EditTransition extends Component {
         let errors = {};
         if (!values.item_name) errors.item_name = t("field_error_required");
         if (!values.account_id) errors.account_id = t("field_error_required");
+        if (!values.item_type) errors.item_type = t("field_error_required");
+        if (!values.provider) errors.provider = t("field_error_required");
+        if (values.amount == "") errors.amount = t("field_error_required");
+        if (!values.transaction_date) errors.transaction_date = t("field_error_required");
         
         this.setState(prevState => ({
             ...prevState,
@@ -309,6 +313,13 @@ class EditTransition extends Component {
         const { match: { params } } = this.props;
         const { id } = params;
 
+        let allowSave = true;
+        if (id === undefined) {
+            allowSave = global.Accessible("POST_TRANSACTION");
+        } else {
+            allowSave = global.Accessible("PUT_TRANSACTION");
+        }
+
         return (<Fragment>
             <Helmet>
                 <title>{ `${t("lb_transactions")} - ${process.env.REACT_APP_TITLE}` }</title>
@@ -337,6 +348,7 @@ class EditTransition extends Component {
                                                 name="account_id"
                                                 value={ content.account_id }
                                                 required
+                                                error={_.get(errors, "account_id","") != ""}
                                                 onChange={this.handleOnChange}
                                                 className="form-input"
                                                 disabled={content.is_approved}
@@ -352,7 +364,7 @@ class EditTransition extends Component {
                                                 name="invoice_number"
                                                 variant="outlined"
                                                 fullWidth
-                                                
+                                                error={_.get(errors, "invoice_number","") != ""}
                                                 value={ _.get(content,"invoice_number","")}
                                                 onChange={this.handleOnChange}
                                                 type="text"
@@ -374,7 +386,7 @@ class EditTransition extends Component {
                                                 name="provider"
                                                 variant="outlined"
                                                 fullWidth
-                                                
+                                                error={_.get(errors, "provider","") != ""}
                                                 value={ _.get(content,"provider","")}
                                                 onChange={this.handleOnChange}
                                                 type="text"
@@ -397,6 +409,7 @@ class EditTransition extends Component {
                                                 variant="outlined"
                                                 fullWidth
                                                 multiline
+                                                error={_.get(errors, "item_name","") != ""}
                                                 value={ _.get(content,"item_name","")}
                                                 onChange={this.handleOnChange}
                                                 type="text"
@@ -418,7 +431,7 @@ class EditTransition extends Component {
                                                 name="item_type"
                                                 variant="outlined"
                                                 fullWidth
-                                                
+                                                error={_.get(errors, "item_type","") != ""}
                                                 value={ _.get(content,"item_type","")}
                                                 onChange={this.handleOnChange}
                                                 type="text"
@@ -440,6 +453,7 @@ class EditTransition extends Component {
                                                 name="payment_method"
                                                 variant="outlined"
                                                 fullWidth
+                                                error={_.get(errors, "payment_method","") != ""}
                                                 error={ errors.payment_method }
                                                 onChange={this.handleOnChange}
                                                 inputProps={{
@@ -470,6 +484,7 @@ class EditTransition extends Component {
                                                 type="number"
                                                 helperText={_.get(errors, "amount","")}
                                                 required
+                                                error={_.get(errors, "amount","") != ""}
                                                 inputProps={{
                                                     className:"form-input",
                                                     readOnly: content.is_approved,
@@ -487,6 +502,7 @@ class EditTransition extends Component {
                                                 fullWidth
                                                 value={_.get(content,"transaction_date", null)}
                                                 placeholder=""
+                                                error={_.get(errors, "transaction_date","") != ""}
                                                 required
                                                 inputVariant="outlined"
                                                 onChange={ this.handleOnDateChange('transaction_date') }
@@ -509,6 +525,7 @@ class EditTransition extends Component {
                                             <TextField
                                                 name="approved_by"
                                                 variant="outlined"
+                                                error={_.get(errors, "approved_by","") != ""}
                                                 fullWidth
                                                 value={ _.get(content,"approved_by","")}
                                                 onChange={this.handleOnChange}
@@ -528,6 +545,7 @@ class EditTransition extends Component {
                                             <KeyboardDatePicker
                                                 fullWidth
                                                 value={_.get(content,"approved_at", null)}
+                                                error={_.get(errors, "approved_at","") != ""}
                                                 placeholder=""
                                                 inputVariant="outlined"
                                                 onChange={ this.handleOnDateChange('approved_at') }
@@ -551,6 +569,7 @@ class EditTransition extends Component {
                                             <FileUpload 
                                                 value={ _.get(content,"receipt","")}
                                                 onChange={this.handleOnUpload} 
+                                                error={_.get(errors, "receipt_file","") != ""}
                                                 name="receipt_file"
                                                 deletedField="delete_receipt"
                                                 disabled={content.is_approved}
@@ -565,6 +584,7 @@ class EditTransition extends Component {
                                                 name="description"
                                                 variant="outlined"
                                                 fullWidth
+                                                error={_.get(errors, "description","") != ""}
                                                 value={ _.get(content,"description","")}
                                                 onChange={this.handleOnChange}
                                                 type="text"
@@ -583,7 +603,7 @@ class EditTransition extends Component {
                                 <Grid container>
                                     <Grid item sm={6} xs={6}>
                                     {
-                                        (id !== undefined && !content.is_approved) && <Button 
+                                        (id !== undefined && !content.is_approved && global.Accessible("APPROVE_TRANSACTION")) && <Button 
                                             onClick={this.handleOnApprove}
                                             color="primary"
                                             size="middle"
@@ -598,6 +618,7 @@ class EditTransition extends Component {
                                     </Grid>
                                     <Grid item sm={6} xs={6} style={{textAlign:"right"}}>
                                         <FormButtonGroup
+                                            allowSave={allowSave}
                                             onCancel={(e) => {
                                                 e.preventDefault()
                                                 window.location.href="/transactions"

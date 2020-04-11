@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Grid, Card, CardHeader,CardContent, IconButton, Button, ButtonGroup } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/Edit';
+import VisibilityIcon from '@material-ui/icons/Visibility';
 import DataTable from '../../components/DataTable';
 import Breadcrumbs from '../../components/Breadcrumbs';
 import SearchBox from '../../components/SearchBox';
@@ -76,15 +77,17 @@ const Accounts = props => {
                             />
                         </Grid>
                         <Grid item xs={6}>
-                            <Button
-                                startIcon={<AddIcon />}
-                                color="primary"
-                                variant="contained"
-                                className="float-right"
-                                href="/accounts/create"
-                            >
-                                {t('btn_new')}
-                            </Button>
+                            {
+                                global.Accessible("POST_ACCOUNT") && <Button
+                                    startIcon={<AddIcon />}
+                                    color="primary"
+                                    variant="contained"
+                                    className="float-right"
+                                    href="/accounts/create"
+                                >
+                                    {t('btn_new')}
+                                </Button>
+                            }
                         </Grid>
                         <Grid xs={12} className="list-table-container">
                             <DataTable
@@ -116,7 +119,7 @@ const Accounts = props => {
                                     (row) => {
                                         return(<Fragment>
                                             <IconButton aria-label="settings" href={`/accounts/edit/${row.id}`}>
-                                                <EditIcon />
+                                            { global.Accessible("PUT_ACCOUNT") ? <EditIcon/> : <VisibilityIcon /> }
                                             </IconButton>
                                         </Fragment>)
                                     }
