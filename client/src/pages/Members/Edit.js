@@ -239,8 +239,15 @@ class EditMember extends Component {
                 }
             });
         }).catch((err)=>{
-            const message = _.get(err,'message',err);
-
+            const { message = "", error = null } = err;
+            if (error != null) {
+                this.setState({
+                    errors: _.reduce(error,(r,v,k) =>{
+                        r[k] = t(_.get(v,"0",""));
+                        return r;
+                    },{})
+                })
+            }
             toast.error(message ? t(message) : t("system_error"), {
                 position: "top-right",
                 autoClose: 5000,
@@ -289,7 +296,7 @@ class EditMember extends Component {
                                 <Grid container style={{
                                     marginTop: "20px"
                                 }}>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             required
                                             label={ `${t('input_zh_surname')}:` }
@@ -310,7 +317,7 @@ class EditMember extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             required
                                             label={ `${t('input_zh_first_name')}:` }
@@ -331,7 +338,7 @@ class EditMember extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             required
                                             label={ `${t('input_en_surname')}:` }
@@ -352,7 +359,7 @@ class EditMember extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             required
                                             label={ `${t('input_en_first_name')}:` }
@@ -373,7 +380,7 @@ class EditMember extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             required
                                             label={ `${t('input_email')}:` }
@@ -394,7 +401,7 @@ class EditMember extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             required
                                             label={ `${t('input_mobile')}:` }
@@ -415,7 +422,7 @@ class EditMember extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             required
                                             label={ `${t('input_home_address')}:` }
@@ -436,7 +443,7 @@ class EditMember extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             required
                                             label={ `${t('input_gender')}:` }
@@ -472,7 +479,7 @@ class EditMember extends Component {
                                             <FormHelperText className="error">{_.get(errors, "gender","")}</FormHelperText>
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             required
                                             label={ `${t('input_dob')}:` }
@@ -498,7 +505,7 @@ class EditMember extends Component {
                                             <FormHelperText className="error">{_.get(errors, "dob","")}</FormHelperText>
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             required
                                             label={ `${t('input_hkid')}:` }
@@ -519,7 +526,7 @@ class EditMember extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             label={ `${t('input_emergency_contact')}:` }
                                         >
@@ -538,7 +545,7 @@ class EditMember extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             label={ `${t('input_emergency_relation')}:` }
                                         >
@@ -557,7 +564,7 @@ class EditMember extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             label={ `${t('input_emergency_number')}:` }
                                         >
@@ -576,7 +583,7 @@ class EditMember extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             required
                                             label={ `${t('input_comnpany')}:` }
@@ -597,7 +604,7 @@ class EditMember extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             required
                                             label={ `${t('input_office_address')}:` }
@@ -618,7 +625,7 @@ class EditMember extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             required
                                             label={ `${t('input_job_title')}:` }
@@ -639,7 +646,7 @@ class EditMember extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             required
                                             label={ `${t('input_employment_terms')}:` }
@@ -666,7 +673,7 @@ class EditMember extends Component {
                                             <FormHelperText className="error">{_.get(errors, "office_address","")}</FormHelperText>
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             label={ `${t('input_office_phone')}:` }
                                         >
@@ -685,7 +692,7 @@ class EditMember extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             label={ `${t('input_department')}:` }
                                         >
@@ -705,8 +712,8 @@ class EditMember extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}></Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}></Grid>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             
                                             label={ `${t('input_profile')}:` }
@@ -721,7 +728,7 @@ class EditMember extends Component {
                                             <FormHelperText className="error">{_.get(errors, "profile_file","")}</FormHelperText>
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             label={ `${t('input_remark')}:` }
                                         >
@@ -742,8 +749,8 @@ class EditMember extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={12}><hr /></Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={12} xs={12}><hr /></Grid>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             label={ `${t('input_member_ref')}:` }
                                         >
@@ -763,7 +770,7 @@ class EditMember extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             label={ `${t('input_is_actived')}:` }
                                         >
@@ -777,7 +784,7 @@ class EditMember extends Component {
                                             <FormHelperText className="error">{_.get(errors, "is_actived","")}</FormHelperText>
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             label={ `${t('input_password')}:` }
                                         >
@@ -796,7 +803,7 @@ class EditMember extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             required={content.password}
                                             label={ `${t('input_password_confirmation')}:` }
@@ -817,7 +824,7 @@ class EditMember extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             label={ `${t('input_subscription')}:` }
                                         >
@@ -831,7 +838,7 @@ class EditMember extends Component {
                                             <FormHelperText className="error">{_.get(errors, "subscription","")}</FormHelperText>
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             label={ `${t('input_sent_group_invite')}:` }
                                         >

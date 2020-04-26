@@ -1,6 +1,8 @@
 @import 'colors'
 @import url('https://fonts.googleapis.com/css?family=Noto+Sans+TC:400,500,700,900|Open+Sans:400,500,700,900&display=swap')
 
+$tablet: 1024px
+
 /* Fixing Material UI issues */
 .MuiFormHelperText-root
     &.MuiFormHelperText-contained
@@ -53,6 +55,11 @@ body
         padding: 0
         box-shadow: 2px 0px 4px 0px $color-orange
         z-index: 1000
+        position: fixed
+        top: 0
+        left: 0
+        height: 100vh
+        z-index: 950
         .menu-item
             width: 100%
             white-space: nowrap
@@ -120,7 +127,14 @@ body
                         .nav-item
                             .nav-icon
                                 margin-right: -5px
-                    
+            & + .main-content
+                margin-left: 80px
+                transition: all 0.3s
+        & + .main-content
+            margin-left: 320px
+            transition: all 0.3s
+            @media screen and (max-width: $tablet)
+                margin-left: 80px
     .main-footer
         width: 100vw
         position: fixed
@@ -138,11 +152,11 @@ body
     .main-content
         width: 100%
         padding: 0 20px 80px 20px
+        overflow: auto
         .breadcrumbs
             color: $color-regal-blue
         .content-wrapper
-            min-height: calc(100vh - 140px)
-            max-height: calc(100vh - 140px)
+            min-height: calc(100vh - 145px)
             .content-body
                 padding: 20px
                 .list-table-container

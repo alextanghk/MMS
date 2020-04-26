@@ -32,7 +32,7 @@ class Transaction < ApplicationRecord
       :url => ENV["BASE_URL"]+"/uploads/transit/receipt/:uuid/:style/:filename"
   end
 
-  validates_attachment_content_type :receipt, content_type: /\Aimage\/.*\z/
+  validates_attachment_content_type :receipt, content_type: ['image/jpeg', 'image/png', 'application/pdf'], size: { less_than: 5.megabytes }
     
   before_create do
     self.uuid = loop do

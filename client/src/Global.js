@@ -23,7 +23,7 @@ global.Fetch = (url, myHeader = {}) => {
 }
 
 global.Accessible = (code) => {
-    const user = cookies.get('mms_user');
+    const user = cookies.get("mms_login",{path: "/",domain:window.location.hostname});
     if (user === undefined)
         return false;
     const { access_rights } = user;

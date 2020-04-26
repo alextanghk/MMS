@@ -50,24 +50,36 @@ const DataTableHead = props => {
                 {
                     columns.map((col)=>{
                         var columnOrder = orderBy === col.key ? order : "asc";
-                        return(<TableCell
-                            key={col.key}
-                            align={col.align ? col.align: 'left'}
-                            sortDirection={orderBy === col.key ? order : false}
-                        >
-                            <TableSortLabel
-                                active={orderBy === col.key}
-                                direction={columnOrder}
-                                onClick={createSortHandler(col.key, columnOrder ==="desc" ? "asc":"desc")}
-                                >
+                        const { allowSort = true } = col;
+                        if (allowSort) {
+                            return(<TableCell
+                                key={col.key}
+                                align={col.align ? col.align: 'left'}
+                                sortDirection={orderBy === col.key ? order : false}
+                            >
+                                <TableSortLabel
+                                    active={orderBy === col.key}
+                                    direction={columnOrder}
+                                    onClick={createSortHandler(col.key, columnOrder ==="desc" ? "asc":"desc")}
+                                    >
+                                    {col.label}
+                                    {orderBy === col.key ? (
+                                        <span className={classes.visuallyHidden}>
+                                            {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                                        </span>
+                                    ) : null}
+                                </TableSortLabel>
+                            </TableCell>)
+                        } else {
+                            return(<TableCell
+                                key={col.key}
+                                align={col.align ? col.align: 'left'}
+                                sortDirection={orderBy === col.key ? order : false}
+                            >
                                 {col.label}
-                                {orderBy === col.key ? (
-                                    <span className={classes.visuallyHidden}>
-                                        {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                                    </span>
-                                ) : null}
-                            </TableSortLabel>
-                        </TableCell>)
+                            </TableCell>)
+                        }
+                        
                     })
                 }
                 {

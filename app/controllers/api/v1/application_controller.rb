@@ -3,6 +3,7 @@ class SecurityTransgression < StandardError
     "user_access_deined"
   end
 end
+
 class Api::V1::ApplicationController < ApplicationController 
   include ActionController::Cookies
 

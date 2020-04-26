@@ -89,6 +89,7 @@ Account.create({
 })
 
 defaultConfig = [
-    { code: "APPLY_RESPONSE_MSG",display_name:"Application Response Message",content:"Welcome"}
+    { code: "APPLY_RESPONSE_MSG",display_name:"Application Response Message",content:"Welcome"},
+    { code: "MEMBERSHIP_FEE",display_name:"Membership fee",content:"400"},
 ]
 SystemConfig.create(defaultConfig)

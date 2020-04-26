@@ -176,8 +176,15 @@ class Profile extends Component {
                 }
             });
         }).catch((err)=>{
-            const message = _.get(err,'message',err);
-
+            const { message = "", error = null } = err;
+            if (error != null) {
+                this.setState({
+                    errors: _.reduce(error,(r,v,k) =>{
+                        r[k] = t(_.get(v,"0",""));
+                        return r;
+                    },{})
+                })
+            }
             toast.error(message ? t(message) : t("system_error"), {
                 position: "top-right",
                 autoClose: 5000,
@@ -217,7 +224,7 @@ class Profile extends Component {
                             <Grid container style={{
                                 marginTop: "20px"
                             }}>
-                                <Grid item md={5} spacing={1}>
+                                <Grid item md={5} xs={11} spacing={1}>
                                     <FormItemContainer
                                         required
                                         label={ `${t('input_zh_name')}:` }
@@ -238,7 +245,7 @@ class Profile extends Component {
                                         />
                                     </FormItemContainer>
                                 </Grid>
-                                <Grid item md={5} spacing={1}>
+                                <Grid item md={5} xs={11} spacing={1}>
                                     <FormItemContainer
                                         required
                                         label={ `${t('input_en_name')}:` }
@@ -260,7 +267,7 @@ class Profile extends Component {
                                     </FormItemContainer>
                                 </Grid>
                                 
-                                <Grid item md={5} spacing={1}>
+                                <Grid item md={5} xs={11} spacing={1}>
                                     <FormItemContainer
                                         required
                                         label={ `${t('input_email')}:` }
@@ -281,7 +288,7 @@ class Profile extends Component {
                                         />
                                     </FormItemContainer>
                                 </Grid>
-                                <Grid item md={5} spacing={1}>
+                                <Grid item md={5} xs={11} spacing={1}>
                                     <FormItemContainer
                                         required
                                         label={ `${t('input_mobile')}:` }
@@ -302,7 +309,7 @@ class Profile extends Component {
                                         />
                                     </FormItemContainer>
                                 </Grid>
-                                <Grid item md={5} spacing={1}>
+                                <Grid item md={5} xs={11} spacing={1}>
                                     <FormItemContainer
                                         required
                                         label={ `${t('input_user_name')}:` }
@@ -324,10 +331,10 @@ class Profile extends Component {
                                         />
                                     </FormItemContainer>
                                 </Grid>
-                                <Grid item md={5} spacing={1}>
+                                <Grid item md={5} xs={11} spacing={1}>
                                     
                                 </Grid>
-                                <Grid item md={5} spacing={1}>
+                                <Grid item md={5} xs={11} spacing={1}>
                                     <FormItemContainer
                                         label={ `${t('input_password')}:` }
                                     >
@@ -346,7 +353,7 @@ class Profile extends Component {
                                         />
                                     </FormItemContainer>
                                 </Grid>
-                                <Grid item md={5} spacing={1}>
+                                <Grid item md={5} xs={11} spacing={1}>
                                     <FormItemContainer
                                         required={content.password}
                                         label={ `${t('input_password_confirmation')}:` }

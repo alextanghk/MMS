@@ -11,6 +11,8 @@ import SearchBox from '../../components/SearchBox';
 import Loader from '../../components/Loader';
 import { makeStyles } from '@material-ui/core/styles';
 import moment from 'moment';
+import { toast } from 'react-toastify';
+import { withTranslation, Trans } from 'react-i18next';
 const useStyles = makeStyles(theme => ({
     tableContainer: {
       paddingTop: "10px"
@@ -20,6 +22,7 @@ const Registrations = props => {
 
     const { t, i18n } = useTranslation();
     const [data, setData] = useState([]);
+    const [loading, setLoading] = useState(false);
     const [filter,setFilter] = useState("");
     const [paging, setPaging] = useState({
         current: 1,
@@ -42,8 +45,10 @@ const Registrations = props => {
     ];
 
     const GetData = () => {
+        const { t, i18n } = props;
         let url = `registrations?page=${paging.current}&size=${paging.pageSize}&order=${paging.orderBy}&sort=${paging.order}`;
         if (filter != "") url = `${url}&keywords=${filter}`;
+        setLoading(true);
         global.Fetch(url)
             .then((result)=>{
                 let newPaging = paging;
@@ -51,8 +56,19 @@ const Registrations = props => {
 
                 setData(result.data);
                 setPaging(newPaging);
+                setLoading(false);
             }).catch((err)=>{
-                console.log(err);
+                toast.error(t("system_error"), {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: false,
+                    draggable: false,
+                    onClose: () => {
+                        setLoading(false);
+                    }
+                });
             })
     }
     useEffect(()=>{
@@ -137,7 +153,7 @@ const Registrations = props => {
                 </CardContent>
             </Card>
         </Grid>
+        { loading && <Loader />}
     </Fragment>);
 }
-
-export default Registrations;
+export default withTranslation('translation')(Registrations);

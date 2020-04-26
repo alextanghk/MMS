@@ -249,8 +249,15 @@ class EditTransition extends Component {
                 }
             });
         }).catch((err)=>{
-            const message = _.get(err,'message',err);
-
+            const { message = "", error = null } = err;
+            if (error != null) {
+                this.setState({
+                    errors: _.reduce(error,(r,v,k) =>{
+                        r[k] = t(_.get(v,"0",""));
+                        return r;
+                    },{})
+                })
+            }
             toast.error(message ? t(message) : t("system_error"), {
                 position: "top-right",
                 autoClose: 5000,
@@ -288,8 +295,15 @@ class EditTransition extends Component {
                 }
             });
         }).catch((err)=>{
-            const message = _.get(err,'message',err);
-
+            const { message = "", error = null } = err;
+            if (error != null) {
+                this.setState({
+                    errors: _.reduce(error,(r,v,k) =>{
+                        r[k] = t(_.get(v,"0",""));
+                        return r;
+                    },{})
+                })
+            }
             toast.error(message ? t(message) : t("system_error"), {
                 position: "top-right",
                 autoClose: 5000,
@@ -339,7 +353,7 @@ class EditTransition extends Component {
                                 <Grid container style={{
                                     marginTop: "20px"
                                 }}>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             required
                                             label={ `${t('input_account')}:` }
@@ -355,7 +369,7 @@ class EditTransition extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             required
                                             label={ `${t('input_invoice_number')}:` }
@@ -377,7 +391,7 @@ class EditTransition extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             required
                                             label={ `${t('input_provider')}:` }
@@ -399,7 +413,7 @@ class EditTransition extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             required
                                             label={ `${t('input_item_name')}:` }
@@ -422,7 +436,7 @@ class EditTransition extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             required
                                             label={ `${t('input_item_type')}:` }
@@ -444,7 +458,7 @@ class EditTransition extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             label={ `${t('input_payment_method')}:` }
                                         >
@@ -470,7 +484,7 @@ class EditTransition extends Component {
                                             <FormHelperText className="error">{_.get(errors, "payment_method","")}</FormHelperText>
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             required
                                             label={ `${t('input_amount')}:` }
@@ -493,7 +507,7 @@ class EditTransition extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             required
                                             label={ `${t('input_transaction_date')}:` }
@@ -518,7 +532,7 @@ class EditTransition extends Component {
                                             <FormHelperText className="error">{_.get(errors, "transaction_date","")}</FormHelperText>
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             label={ `${t('input_approved_by')}:` }
                                         >
@@ -538,7 +552,7 @@ class EditTransition extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             label={ `${t('input_approved_at')}:` }
                                         >
@@ -561,7 +575,7 @@ class EditTransition extends Component {
                                             <FormHelperText className="error">{_.get(errors, "approved_at","")}</FormHelperText>
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             
                                             label={ `${t('input_receipt')}:` }
@@ -576,7 +590,7 @@ class EditTransition extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             label={ `${t('input_description')}:` }
                                         >

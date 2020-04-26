@@ -164,8 +164,15 @@ class EditUserGroup extends Component {
                 }
             });
         }).catch((err)=>{
-            const message = _.get(err,'message',err);
-
+            const { message = "", error = null } = err;
+            if (error != null) {
+                this.setState({
+                    errors: _.reduce(error,(r,v,k) =>{
+                        r[k] = t(_.get(v,"0",""));
+                        return r;
+                    },{})
+                })
+            }
             toast.error(message ? t(message) : t("system_error"), {
                 position: "top-right",
                 autoClose: 5000,
@@ -211,7 +218,7 @@ class EditUserGroup extends Component {
                             <Grid container style={{
                                 marginTop: "20px"
                             }}>
-                                <Grid item md={11} spacing={1}>
+                                <Grid item md={11} xs={11} spacing={1}>
                                     <FormItemContainer
                                         required
                                         large
@@ -233,7 +240,7 @@ class EditUserGroup extends Component {
                                         />
                                     </FormItemContainer>
                                 </Grid>
-                                <Grid item md={11} spacing={1}>
+                                <Grid item md={11} xs={11} spacing={1}>
                                     <FormItemContainer
                                         large
                                         label={ `${t('input_remark')}:` }
@@ -255,7 +262,7 @@ class EditUserGroup extends Component {
                                         />
                                     </FormItemContainer>
                                 </Grid>
-                                <Grid item md={11} spacing={1}>
+                                <Grid item md={11} xs={11} spacing={1}>
                                     <FormItemContainer
                                         large
                                         label={ `${t('input_access_rights')}:` }

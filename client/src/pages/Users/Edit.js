@@ -248,7 +248,7 @@ class EditUser extends Component {
                             <Grid container style={{
                                 marginTop: "20px"
                             }}>
-                                <Grid item md={5} spacing={1}>
+                                <Grid item md={5} xs={11} spacing={1}>
                                     <FormItemContainer
                                         required
                                         label={ `${t('input_zh_name')}:` }
@@ -269,7 +269,7 @@ class EditUser extends Component {
                                         />
                                     </FormItemContainer>
                                 </Grid>
-                                <Grid item md={5} spacing={1}>
+                                <Grid item md={5} xs={11} spacing={1}>
                                     <FormItemContainer
                                         required
                                         label={ `${t('input_en_name')}:` }
@@ -291,7 +291,7 @@ class EditUser extends Component {
                                     </FormItemContainer>
                                 </Grid>
                                 
-                                <Grid item md={5} spacing={1}>
+                                <Grid item md={5} xs={11} spacing={1}>
                                     <FormItemContainer
                                         required
                                         label={ `${t('input_email')}:` }
@@ -312,7 +312,7 @@ class EditUser extends Component {
                                         />
                                     </FormItemContainer>
                                 </Grid>
-                                <Grid item md={5} spacing={1}>
+                                <Grid item md={5} xs={11} spacing={1}>
                                     <FormItemContainer
                                         label={ `${t('input_mobile')}:` }
                                     >
@@ -331,7 +331,7 @@ class EditUser extends Component {
                                         />
                                     </FormItemContainer>
                                 </Grid>
-                                <Grid item md={5} spacing={1}>
+                                <Grid item md={5} xs={11} spacing={1}>
                                     <FormItemContainer
                                         required
                                         label={ `${t('input_user_name')}:` }
@@ -352,7 +352,7 @@ class EditUser extends Component {
                                         />
                                     </FormItemContainer>
                                 </Grid>
-                                <Grid item md={5} spacing={1}>
+                                <Grid item md={5} xs={11} spacing={1}>
                                     <FormItemContainer
                                         required
                                         label={ `${t('input_user_group')}:` }
@@ -367,7 +367,7 @@ class EditUser extends Component {
                                         />
                                     </FormItemContainer>
                                 </Grid>
-                                <Grid item md={5} spacing={1}>
+                                <Grid item md={5} xs={11} spacing={1}>
                                     <FormItemContainer
                                         label={ `${t('input_password')}:` }
                                     >
@@ -386,7 +386,7 @@ class EditUser extends Component {
                                         />
                                     </FormItemContainer>
                                 </Grid>
-                                <Grid item md={5} spacing={1}>
+                                <Grid item md={5} xs={11} spacing={1}>
                                     <FormItemContainer
                                         required={content.password}
                                         label={ `${t('input_password_confirmation')}:` }
@@ -408,7 +408,7 @@ class EditUser extends Component {
                                     </FormItemContainer>
                                 </Grid>
                                 
-                                <Grid item md={5} spacing={1}>
+                                <Grid item md={5} xs={11} spacing={1}>
                                     <FormItemContainer
                                         label={ `${t('input_is_actived')}:` }
                                     >

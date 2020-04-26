@@ -473,14 +473,32 @@ class EditRegistration extends Component {
         const { match: { params } } = this.props;
         const { id } = params;
         let allowSave = true;
+        let allowWithdraw = true;
+        let allowCancel = true;
+        let allowApprove = true;
         if (id === undefined) {
             allowSave = global.Accessible("POST_REGISTRATION");
         } else {
             allowSave = global.Accessible("PUT_REGISTRATION");
         }
-
-        if (content.status == "Completed") {
-            allowSave = global.Accessible("UPDATE_REGISTRATION_AFTER_APPROVED");
+        switch(content.status) {
+            case "New":
+                allowWithdraw = false;
+                break;
+            case "Cancelled":
+                allowWithdraw = false;
+                allowApprove = false;
+                allowCancel = false;
+                break;
+            case "Completed":
+                allowApprove = false;
+                allowCancel = false;
+                allowSave = global.Accessible("UPDATE_REGISTRATION_AFTER_APPROVED");
+                break;
+            default:
+                allowCancel = false;
+                allowApprove = false;
+                break;
         }
 
         return (<Fragment>
@@ -504,7 +522,7 @@ class EditRegistration extends Component {
                                 <Grid container style={{
                                     marginTop: "20px"
                                 }}>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             required
                                             label={ `${t('input_zh_surname')}:` }
@@ -525,7 +543,7 @@ class EditRegistration extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             required
                                             label={ `${t('input_zh_first_name')}:` }
@@ -546,7 +564,7 @@ class EditRegistration extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             required
                                             label={ `${t('input_en_surname')}:` }
@@ -567,7 +585,7 @@ class EditRegistration extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             required
                                             label={ `${t('input_en_first_name')}:` }
@@ -588,7 +606,7 @@ class EditRegistration extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             required
                                             label={ `${t('input_email')}:` }
@@ -609,7 +627,7 @@ class EditRegistration extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             required
                                             label={ `${t('input_mobile')}:` }
@@ -630,7 +648,7 @@ class EditRegistration extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             required
                                             label={ `${t('input_home_address')}:` }
@@ -651,7 +669,7 @@ class EditRegistration extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             required
                                             label={ `${t('input_gender')}:` }
@@ -687,7 +705,7 @@ class EditRegistration extends Component {
                                             <FormHelperText className="error">{_.get(errors, "gender","")}</FormHelperText>
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             required
                                             label={ `${t('input_dob')}:` }
@@ -713,7 +731,7 @@ class EditRegistration extends Component {
                                             <FormHelperText className="error">{_.get(errors, "dob","")}</FormHelperText>
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             required
                                             label={ `${t('input_hkid')}:` }
@@ -734,7 +752,7 @@ class EditRegistration extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             required
                                             label={ `${t('input_comnpany')}:` }
@@ -755,7 +773,7 @@ class EditRegistration extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             required
                                             label={ `${t('input_office_address')}:` }
@@ -776,7 +794,7 @@ class EditRegistration extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             required
                                             label={ `${t('input_job_title')}:` }
@@ -797,7 +815,7 @@ class EditRegistration extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             required
                                             label={ `${t('input_employment_terms')}:` }
@@ -824,7 +842,7 @@ class EditRegistration extends Component {
                                             <FormHelperText className="error">{_.get(errors, "employment_terms","")}</FormHelperText>
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             label={ `${t('input_office_phone')}:` }
                                         >
@@ -843,7 +861,7 @@ class EditRegistration extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             label={ `${t('input_department')}:` }
                                         >
@@ -862,7 +880,7 @@ class EditRegistration extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             label={ `${t('input_status')}:` }
                                         >
@@ -881,8 +899,8 @@ class EditRegistration extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}></Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}></Grid>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             
                                             label={ `${t('input_proof')}:` }
@@ -895,7 +913,7 @@ class EditRegistration extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             label={ `${t('input_remark')}:` }
                                         >
@@ -916,7 +934,7 @@ class EditRegistration extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={11} spacing={1}>
+                                    <Grid item md={11} xs={11} spacing={1}>
                                         <FormItemContainer large>
                                             <FormControl className="form-item" component="fieldset">
                                                 <FormControlLabel
@@ -932,7 +950,7 @@ class EditRegistration extends Component {
                                             <FormHelperText className="error">{_.get(errors, "declare","")}</FormHelperText>
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={11} spacing={1}>
+                                    <Grid item md={11} xs={11} spacing={1}>
                                         <FormItemContainer large>
                                             <FormControl className="form-item" component="fieldset">
                                                 <FormControlLabel
@@ -948,8 +966,8 @@ class EditRegistration extends Component {
                                             <FormHelperText className="error">{_.get(errors, "agreement","")}</FormHelperText>
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={12}><hr /></Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={12} xs={12}><hr /></Grid>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             label={ `${t('input_sent_confirmation')}:` }
                                         >
@@ -962,7 +980,7 @@ class EditRegistration extends Component {
                                             <FormHelperText className="error">{_.get(errors, "sent_confirmation","")}</FormHelperText>
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             label={ `${t('input_paid')}:` }
                                         >
@@ -975,7 +993,7 @@ class EditRegistration extends Component {
                                             <FormHelperText className="error">{_.get(errors, "paid","")}</FormHelperText>
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             label={ `${t('input_sent_payment_note')}:` }
                                         >
@@ -988,7 +1006,7 @@ class EditRegistration extends Component {
                                             <FormHelperText className="error">{_.get(errors, "sent_payment_note","")}</FormHelperText>
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             required={content.paid}
                                             label={ `${t('input_paid_at')}:` }
@@ -1013,8 +1031,8 @@ class EditRegistration extends Component {
                                         </FormItemContainer>
                                     </Grid>
                                     
-                                    <Grid item md={5} spacing={1}></Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}></Grid>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             required={content.paid}
                                             label={ `${t('input_payment_method')}:` }
@@ -1041,8 +1059,8 @@ class EditRegistration extends Component {
                                             <FormHelperText className="error">{_.get(errors, "payment_method","")}</FormHelperText>
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}></Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}></Grid>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             label={ `${t('input_sent_receipt')}:` }
                                         >
@@ -1055,10 +1073,11 @@ class EditRegistration extends Component {
                                             <FormHelperText className="error">{_.get(errors, "sent_receipt","")}</FormHelperText>
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}></Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}></Grid>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             label={ `${t('input_receipt_no')}:` }
+                                            required={content.sent_receipt}
                                         >
                                             <TextField
                                                 name="receipt_no"
@@ -1066,6 +1085,7 @@ class EditRegistration extends Component {
                                                 fullWidth
                                                 error={ errors.receipt_no }
                                                 value={ _.get(content,"receipt_no","")}
+                                                required={content.sent_receipt}
                                                 onChange={this.handleOnChange}
                                                 type="text"
                                                 helperText={_.get(errors, "receipt_no","")}
@@ -1083,7 +1103,7 @@ class EditRegistration extends Component {
                                     {
                                         id !== undefined && <Fragment>
                                             {
-                                                (content.status != "Completed" && global.Accessible("APPROVE_REGISTRATION")) && <Button 
+                                                (content.status != "Completed" && global.Accessible("APPROVE_REGISTRATION") && allowApprove) && <Button 
                                                         onClick={this.handleOnApprove}
                                                         color="primary"
                                                         size="middle"
@@ -1096,7 +1116,7 @@ class EditRegistration extends Component {
                                                 </Button>
                                             }
                                             {
-                                                (content.status != "Cancelled" && global.Accessible("CANCEL_REGISTRATION")) && <Button 
+                                                (content.status != "Cancelled" && global.Accessible("CANCEL_REGISTRATION") && allowCancel) && <Button 
                                                         onClick={this.handleOnCancel}
                                                         color="secondary"
                                                         size="middle"
@@ -1109,7 +1129,7 @@ class EditRegistration extends Component {
                                                 </Button>
                                             }
                                             {
-                                                (content.status != "Withdraw" && global.Accessible("WITHDRAW_REGISTRATION")) && <Button 
+                                                (content.status != "Withdraw" && global.Accessible("WITHDRAW_REGISTRATION") && allowWithdraw) && <Button 
                                                         onClick={this.handleOnWithdraw}
                                                         color="inherit"
                                                         size="middle"

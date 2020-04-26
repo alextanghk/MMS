@@ -227,8 +227,15 @@ class EditClaims extends Component {
                 }
             });
         }).catch((err)=>{
-            const message = _.get(err,'message',err);
-
+            const { message = "", error = null } = err;
+            if (error != null) {
+                this.setState({
+                    errors: _.reduce(error,(r,v,k) =>{
+                        r[k] = t(_.get(v,"0",""));
+                        return r;
+                    },{})
+                })
+            }
             toast.error(message ? t(message) : t("system_error"), {
                 position: "top-right",
                 autoClose: 5000,
@@ -279,8 +286,15 @@ class EditClaims extends Component {
                 }
             });
         }).catch((err)=>{
-            const message = _.get(err,'message',err);
-
+            const { message = "", error = null } = err;
+            if (error != null) {
+                this.setState({
+                    errors: _.reduce(error,(r,v,k) =>{
+                        r[k] = t(_.get(v,"0",""));
+                        return r;
+                    },{})
+                })
+            }
             toast.error(message ? t(message) : t("system_error"), {
                 position: "top-right",
                 autoClose: 5000,
@@ -365,8 +379,15 @@ class EditClaims extends Component {
                 }
             });
         }).catch((err)=>{
-            const message = _.get(err,'message',err);
-
+            const { message = "", error = null } = err;
+            if (error != null) {
+                this.setState({
+                    errors: _.reduce(error,(r,v,k) =>{
+                        r[k] = t(_.get(v,"0",""));
+                        return r;
+                    },{})
+                })
+            }
             toast.error(message ? t(message) : t("system_error"), {
                 position: "top-right",
                 autoClose: 5000,
@@ -451,8 +472,15 @@ class EditClaims extends Component {
                 }
             });
         }).catch((err)=>{
-            const message = _.get(err,'message',err);
-
+            const { message = "", error = null } = err;
+            if (error != null) {
+                this.setState({
+                    errors: _.reduce(error,(r,v,k) =>{
+                        r[k] = t(_.get(v,"0",""));
+                        return r;
+                    },{})
+                })
+            }
             toast.error(message ? t(message) : t("system_error"), {
                 position: "top-right",
                 autoClose: 5000,
@@ -490,8 +518,15 @@ class EditClaims extends Component {
                 }
             });
         }).catch((err)=>{
-            const message = _.get(err,'message',err);
-
+            const { message = "", error = null } = err;
+            if (error != null) {
+                this.setState({
+                    errors: _.reduce(error,(r,v,k) =>{
+                        r[k] = t(_.get(v,"0",""));
+                        return r;
+                    },{})
+                })
+            }
             toast.error(message ? t(message) : t("system_error"), {
                 position: "top-right",
                 autoClose: 5000,
@@ -540,7 +575,7 @@ class EditClaims extends Component {
                                 <Grid container style={{
                                     marginTop: "20px"
                                 }}>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             required
                                             label={ `${t('input_invoice_number')}:` }
@@ -562,7 +597,7 @@ class EditClaims extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             required
                                             label={ `${t('input_provider')}:` }
@@ -584,7 +619,7 @@ class EditClaims extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             required
                                             label={ `${t('input_item_name')}:` }
@@ -607,7 +642,7 @@ class EditClaims extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             required
                                             label={ `${t('input_item_type')}:` }
@@ -629,7 +664,7 @@ class EditClaims extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             label={ `${t('input_payment_method')}:` }
                                         >
@@ -655,7 +690,7 @@ class EditClaims extends Component {
                                             <FormHelperText className="error">{_.get(errors, "payment_method","")}</FormHelperText>
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             required
                                             label={ `${t('input_amount')}:` }
@@ -679,7 +714,7 @@ class EditClaims extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             required
                                             label={ `${t('input_paid_by')}:` }
@@ -701,7 +736,7 @@ class EditClaims extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             required
                                             label={ `${t('input_paid_at')}:` }
@@ -726,7 +761,7 @@ class EditClaims extends Component {
                                             <FormHelperText className="error">{_.get(errors, "paid_at","")}</FormHelperText>
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             label={ `${t('input_approved_by')}:` }
                                         >
@@ -746,7 +781,7 @@ class EditClaims extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             label={ `${t('input_approved_at')}:` }
                                         >
@@ -769,7 +804,7 @@ class EditClaims extends Component {
                                             <FormHelperText className="error">{_.get(errors, "approved_at","")}</FormHelperText>
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             label={ `${t('input_handled_by')}:` }
                                         >
@@ -789,7 +824,7 @@ class EditClaims extends Component {
                                             />
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             label={ `${t('input_handled_at')}:` }
                                         >
@@ -812,7 +847,7 @@ class EditClaims extends Component {
                                             <FormHelperText className="error">{_.get(errors, "handled_at","")}</FormHelperText>
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             label={ `${t('input_transaction_date')}:` }
                                         >
@@ -835,8 +870,8 @@ class EditClaims extends Component {
                                             <FormHelperText className="error">{_.get(errors, "transaction_date","")}</FormHelperText>
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}></Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}></Grid>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             
                                             label={ `${t('input_receipt')}:` }
@@ -852,7 +887,7 @@ class EditClaims extends Component {
                                             <FormHelperText className="error">{_.get(errors, "receipt_file","")}</FormHelperText>
                                         </FormItemContainer>
                                     </Grid>
-                                    <Grid item md={5} spacing={1}>
+                                    <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             label={ `${t('input_description')}:` }
                                         >

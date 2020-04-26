@@ -10,11 +10,14 @@ import Breadcrumbs from '../../components/Breadcrumbs';
 import SearchBox from '../../components/SearchBox';
 import Loader from '../../components/Loader';
 import moment from 'moment';
+import { toast } from 'react-toastify';
+import { withTranslation, Trans } from 'react-i18next';
 const Accounts = props => {
 
     const { t, i18n } = useTranslation();
     const [data, setData] = useState([]);
     const [filter,setFilter] = useState("");
+    const [loading, setLoading] = useState(false);
     const [paging, setPaging] = useState({
         current: 1,
         pageSize: 5,
@@ -33,8 +36,10 @@ const Accounts = props => {
     ];
 
     const GetData = () => {
+        const { t, i18n } = props;
         let url = `accounts?page=${paging.current}&size=${paging.pageSize}&order=${paging.orderBy}&sort=${paging.order}`;
         if (filter != "") url = `${url}&keywords=${filter}`;
+        setLoading(true);
         global.Fetch(url)
             .then((result)=>{
                 let newPaging = paging;
@@ -42,8 +47,19 @@ const Accounts = props => {
 
                 setData(result.data);
                 setPaging(newPaging);
+                setLoading(false);
             }).catch((err)=>{
-                console.log(err);
+                toast.error(t("system_error"), {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: false,
+                    draggable: false,
+                    onClose: () => {
+                        setLoading(false);
+                    }
+                });
             })
     }
     useEffect(()=>{
@@ -130,7 +146,7 @@ const Accounts = props => {
                 </CardContent>
             </Card>
         </Grid>
+        { loading && <Loader />}
     </Fragment>);
 }
-
-export default Accounts;
+export default withTranslation('translation')(Accounts);

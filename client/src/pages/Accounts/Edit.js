@@ -213,7 +213,7 @@ class EditAccount extends Component {
                             <Grid container style={{
                                 marginTop: "20px"
                             }}>
-                                <Grid item md={5} spacing={1}>
+                                <Grid item md={5} xs={11} spacing={1}>
                                     <FormItemContainer
                                         required
                                         label={ `${t('input_bank')}:` }
@@ -233,7 +233,7 @@ class EditAccount extends Component {
                                         />
                                     </FormItemContainer>
                                 </Grid>
-                                <Grid item md={5} spacing={1}>
+                                <Grid item md={5} xs={11} spacing={1}>
                                     <FormItemContainer
                                         label={ `${t('input_bank_no')}:` }
                                     >
@@ -251,7 +251,7 @@ class EditAccount extends Component {
                                         />
                                     </FormItemContainer>
                                 </Grid>
-                                <Grid item md={5} spacing={1}>
+                                <Grid item md={5} xs={11} spacing={1}>
                                     <FormItemContainer
                                         label={ `${t('input_remark')}:` }
                                     >
@@ -270,7 +270,7 @@ class EditAccount extends Component {
                                         />
                                     </FormItemContainer>
                                 </Grid>
-                                <Grid item md={5} spacing={1}>
+                                <Grid item md={5} xs={11} spacing={1}>
                                     <FormItemContainer
                                         label={ `${t('input_is_default')}:` }
                                     >

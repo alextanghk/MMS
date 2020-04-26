@@ -9,9 +9,9 @@ class Api::V1::MembersController < Api::V1::ApplicationController
 
         items = Member.active
 
-        # if query[:keywords].present?
-        #     items = items.where("zh_name LIKE ? OR en_name LIKE ?","%#{query[:keywords]}%", "%#{query[:keywords]}%")
-        # end
+        if query[:keywords].present?
+            items = items.where("zh_surname LIKE ? OR en_surname LIKE ? OR zh_first_name LIKE ? OR en_first_name LIKE ?","%#{query[:keywords]}%", "%#{query[:keywords]}%","%#{query[:keywords]}%", "%#{query[:keywords]}%")
+        end
         items = items.order(query[:order] => query[:sort])
         render json: {
             message: "success",

@@ -15,6 +15,8 @@ import HomeIcon from '@material-ui/icons/Home';
 import _ from 'lodash';
 import moment from 'moment';
 import { toast } from 'react-toastify';
+
+import { useWindowSize } from '../../lib/useWindowSize';
 const cookies = new Cookies();
 
 class LoggedIn extends Component {
@@ -34,7 +36,8 @@ class LoggedIn extends Component {
                 loading: false
             })  
         }).catch((err)=>{
-            cookies.remove("mms_user",{path:"/",domain:window.location.hostname});
+            cookies.remove("mms_login",{path:"/",domain:window.location.hostname});
+            cookies.remove("mms_login");
             this.setState({
                 isLoggedIn: false
             })
@@ -95,8 +98,9 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
     const [collapse, setCollapse] = useState(true);
     const [loggedOut, setLoggedOut] = useState(false);
     const [loading, setLoading] = useState(false);
+    const winSize = useWindowSize();
 
-    const user = cookies.get('mms_user');
+    const user = cookies.get("mms_login",{path: "/",domain:window.location.hostname});
     const { t, i18n } = useTranslation();
 
     const navigations = [
@@ -115,7 +119,9 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
     ];
 
     useEffect(()=>{
-        
+        if (winSize.width <= 1024) {
+            setCollapse(false);
+        }
     },[])
 
     const handleLogout = (e) =>{
@@ -124,10 +130,12 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
         global.Fetch("auth/logout",{
             method: "POST"
         }).then((result)=>{
-            cookies.remove("mms_user",{path: "/",domain:window.location.hostname});
+            cookies.remove("mms_login",{path: "/",domain:window.location.hostname});
+            cookies.remove("mms_login");
             setTimeout(()=>{setLoggedOut(true);},300)
         }).catch((err)=>{
-            cookies.remove("mms_user",{path: "/",domain:window.location.hostname});
+            cookies.remove("mms_login",{path: "/",domain:window.location.hostname});
+            cookies.remove("mms_login");
             setTimeout(()=>{setLoggedOut(true);},300)
             setLoading(false);
         })

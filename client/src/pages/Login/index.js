@@ -66,6 +66,7 @@ const Login = props => {
         setErrMsg("");
         setErrUserName("");
         setErrPass("");
+        cookies.remove("mms_login",{path:"/",domain:window.location.hostname});
         if (username == "") setErrUserName(t("msg_username_empty")); 
         if (password == "") setErrPass(t("msg_password_empty")); 
         
@@ -84,7 +85,7 @@ const Login = props => {
                 })
             }).then((result)=>{
                 let exp_date = _.get(result,'data.exp_date','');
-                cookies.set("mms_user", result.data)
+                cookies.set("mms_login", result.data,{path:"/",domain:window.location.hostname})
                 setLogged(true);
             }).catch((err)=>{
                 setLoading(false);

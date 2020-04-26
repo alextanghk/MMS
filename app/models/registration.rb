@@ -8,10 +8,10 @@ class Registration < ApplicationRecord
   scope :active, -> { where(is_deleted: false) }
 
   # Encrypt all sensitive infomration
-  serialize :zh_surname, EncryptedCoder.new
-  serialize :en_surname, EncryptedCoder.new
-  serialize :zh_first_name, EncryptedCoder.new
-  serialize :en_first_name, EncryptedCoder.new
+  # serialize :zh_surname, EncryptedCoder.new
+  # serialize :en_surname, EncryptedCoder.new
+  # serialize :zh_first_name, EncryptedCoder.new
+  # serialize :en_first_name, EncryptedCoder.new
   serialize :mobile, EncryptedCoder.new
   serialize :home_phone, EncryptedCoder.new
   serialize :home_address, EncryptedCoder.new
@@ -19,7 +19,7 @@ class Registration < ApplicationRecord
 
   # Personal information
   validates :email, presence:  { message: "field_error_required"}, format: { with: URI::MailTo::EMAIL_REGEXP } 
-  validates :email, uniqueness:  { message: "field_error_unique"}
+  # validates :email, uniqueness:  { message: "field_error_unique"}
   validates :zh_surname, presence: { message: "field_error_required"}
   validates :en_surname, presence: { message: "field_error_required"}
   validates :zh_first_name, presence: { message: "field_error_required"}
@@ -113,7 +113,7 @@ class Registration < ApplicationRecord
       :url => ENV["BASE_URL"]+"/uploads/registry/:uuid/:style/:filename"
   end
     
-  validates_attachment_content_type :proof, content_type: /\Aimage\/.*\z/
+  validates_attachment_content_type :proof, content_type: ['image/jpeg', 'image/png', 'application/pdf'], size: { less_than: 5.megabytes }
 
   before_create do
     self.uuid = loop do

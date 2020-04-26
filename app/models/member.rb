@@ -6,10 +6,10 @@ class Member < ApplicationRecord
     has_many :registrations
 
     # Encrypt all sensitive infomration
-    serialize :zh_surname, EncryptedCoder.new
-    serialize :en_surname, EncryptedCoder.new
-    serialize :zh_first_name, EncryptedCoder.new
-    serialize :en_first_name, EncryptedCoder.new
+    # serialize :zh_surname, EncryptedCoder.new
+    # serialize :en_surname, EncryptedCoder.new
+    # serialize :zh_first_name, EncryptedCoder.new
+    # serialize :en_first_name, EncryptedCoder.new
     serialize :mobile, EncryptedCoder.new
     serialize :home_phone, EncryptedCoder.new
     serialize :home_address, EncryptedCoder.new
@@ -67,7 +67,7 @@ class Member < ApplicationRecord
             :path => ":rails_root/public/uploads/members/:uuid/:style/:filename", 
             :url => ENV["BASE_URL"]+"/uploads/members/:uuid/:style/:filename"
     end    
-    validates_attachment_content_type :profile, content_type: /\Aimage\/.*\z/
+    validates_attachment_content_type :profile, content_type: ['image/jpeg', 'image/png'], size: { less_than: 5.megabytes }
 
     validates :subscription, acceptance: { message: "field_error_true_only"}
 

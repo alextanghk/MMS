@@ -79,6 +79,11 @@ body {
   -webkit-box-shadow: 2px 0px 4px 0px #E0A025;
           box-shadow: 2px 0px 4px 0px #E0A025;
   z-index: 1000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  z-index: 950;
 }
 
 .main-container .main-menu .menu-item {
@@ -189,6 +194,24 @@ body {
   margin-right: -5px;
 }
 
+.main-container .main-menu:not(.collapsed) + .main-content {
+  margin-left: 80px;
+  -webkit-transition: all 0.3s;
+  transition: all 0.3s;
+}
+
+.main-container .main-menu + .main-content {
+  margin-left: 320px;
+  -webkit-transition: all 0.3s;
+  transition: all 0.3s;
+}
+
+@media screen and (max-width: 1024px) {
+  .main-container .main-menu + .main-content {
+    margin-left: 80px;
+  }
+}
+
 .main-container .main-footer {
   width: 100vw;
   position: fixed;
@@ -211,6 +234,7 @@ body {
 .main-container .main-content {
   width: 100%;
   padding: 0 20px 80px 20px;
+  overflow: auto;
 }
 
 .main-container .main-content .breadcrumbs {
@@ -218,8 +242,7 @@ body {
 }
 
 .main-container .main-content .content-wrapper {
-  min-height: calc(100vh - 140px);
-  max-height: calc(100vh - 140px);
+  min-height: calc(100vh - 145px);
 }
 
 .main-container .main-content .content-wrapper .content-body {
