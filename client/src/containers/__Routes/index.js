@@ -28,6 +28,9 @@ import Users from '../../pages/Users';
 import EditUser from '../../pages/Users/Edit';
 import Profile from '../../pages/Users/Profile';
 
+import Configs from '../../pages/Configs';
+import EditConfigs from '../../pages/Configs/Edit';
+
 const Routes = props => {
     return (<BrowserRouter>
         <Route>
@@ -65,6 +68,10 @@ const Routes = props => {
                 <PrivateRoute exact path="/users/create" component={EditUser} />
                 <PrivateRoute exact path="/users/edit/:id" component={EditUser} />
                 <PrivateRoute exact path="/profile" component={Profile} />
+
+                <PrivateRoute exact path="/configs" component={Configs} />
+                <PrivateRoute exact path="/configs/edit/:id" component={EditConfigs} />
+
             </Switch>
         </Route>   
     </BrowserRouter>);

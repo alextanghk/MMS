@@ -9,7 +9,7 @@ import Loader from '../../components/Loader';
 import {NavLink, Link} from 'react-router-dom';
 import { 
     ViewComfy, ExpandMore, ExpandLess, BorderColor, AccountBalance, SwapHoriz, GroupWork,
-    PeopleAlt, LocalAtm, Settings, MeetingRoom, Receipt, AccountCircle
+    PeopleAlt, LocalAtm, Settings, MeetingRoom, Receipt, AccountCircle, Build
 } from '@material-ui/icons';
 import HomeIcon from '@material-ui/icons/Home';
 import _ from 'lodash';
@@ -114,8 +114,9 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
         ], icon: (<LocalAtm />), accessible: global.Accessible(["GET_ACCOUNT","GET_TRANSACTION","GET_CLAIM"]) }, 
         { id: 1005, name: `${t("lb_system")}`,child:[
             { id: 10051, name: `${t("lb_usergroups")}`, link: "/usergroups", icon:(<GroupWork />), accessible: global.Accessible("GET_USER_GROUP") },
-            { id: 10052, name: `${t("lb_users")}`, link: "/users", icon:(<AccountCircle />), accessible: global.Accessible("GET_USER") }
-        ], icon: (<Settings />), accessible: global.Accessible(["GET_USER_GROUP","GET_USER"])}
+            { id: 10052, name: `${t("lb_users")}`, link: "/users", icon:(<AccountCircle />), accessible: global.Accessible("GET_USER") },
+            { id: 10053, name: `${t("lb_configs")}`, link: "/configs", icon:(<Build />), accessible: global.Accessible("GET_SYS_CONFIG") }
+        ], icon: (<Settings />), accessible: global.Accessible(["GET_USER_GROUP","GET_USER","GET_SYS_CONFIG"])}
     ];
 
     useEffect(()=>{

@@ -11,7 +11,7 @@ class Api::V1::ConfigsController < Api::V1::ApplicationController
         items = SystemConfig.active
 
         if query[:keywords].present?
-            items = items.where("zh_name LIKE ? OR en_name LIKE ?","%#{query[:keywords]}%", "%#{query[:keywords]}%")
+            items = items.where("display_name ILIKE ?","%#{query[:keywords]}%")
         end
         items = items.order(query[:order] => query[:sort])
         render json: {

@@ -10,7 +10,7 @@ class Api::V1::MembersController < Api::V1::ApplicationController
         items = Member.active
 
         if query[:keywords].present?
-            items = items.where("zh_surname LIKE ? OR en_surname LIKE ? OR zh_first_name LIKE ? OR en_first_name LIKE ?","%#{query[:keywords]}%", "%#{query[:keywords]}%","%#{query[:keywords]}%", "%#{query[:keywords]}%")
+            items = items.where("zh_surname ILIKE ? OR en_surname ILIKE ? OR zh_first_name ILIKE ? OR en_first_name ILIKE ?","%#{query[:keywords]}%", "%#{query[:keywords]}%","%#{query[:keywords]}%", "%#{query[:keywords]}%")
         end
         items = items.order(query[:order] => query[:sort])
         render json: {

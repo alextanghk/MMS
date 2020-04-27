@@ -55,8 +55,8 @@ defaultAccess = [
     { code: 'HANDLE_CLAIM', displayname: "Handle", function: "Claims", category: "Status", func_weight: 7, cat_weight: 1, weight: 0, is_display: true },
     { code: 'REJECT_CLAIM', displayname: "Reject", function: "Claims", category: "Status", func_weight: 7, cat_weight: 1, weight: 0, is_display: true },
     # For System
-    { code: 'GET_SYS_CONFIG', displayname: "View", function: "System Config", category: "All", func_weight: 8, cat_weight: 0, weight: 0, is_display: false },
-    { code: 'PUT_SYS_CONFIG', displayname: "Edit", function: "System Config", category: "All", func_weight: 8, cat_weight: 0, weight: 0, is_display: false },
+    { code: 'GET_SYS_CONFIG', displayname: "View", function: "System Config", category: "All", func_weight: 8, cat_weight: 0, weight: 0, is_display: true },
+    { code: 'PUT_SYS_CONFIG', displayname: "Edit", function: "System Config", category: "All", func_weight: 8, cat_weight: 0, weight: 0, is_display: true },
 
 ]
 AccessRight.create(defaultAccess)

@@ -10,7 +10,7 @@ class Api::V1::UserGroupsController < Api::V1::ApplicationController
         page = query[:page].present? ? query[:page] : 1
         size = query[:size].present? ? query[:size] : 25
         if query[:keywords].present?
-            items = items.where("name LIKE ? ","%#{query[:keywords]}%")
+            items = items.where("name ILIKE ? ","%#{query[:keywords]}%")
         end
         items = items.order(query[:order] => query[:sort])
         render json: {

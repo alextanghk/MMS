@@ -9,7 +9,7 @@ class Api::V1::UsersController < Api::V1::ApplicationController
         page = query[:page].present? ? query[:page] : 1
         size = query[:size].present? ? query[:size] : 25
         if query[:keywords].present?
-            items = items.where("zh_name LIKE ? OR en_name LIKE ? OR email LIKE ? OR user_name LIKE ? ","%#{query[:keywords]}%","%#{query[:keywords]}%","%#{query[:keywords]}%","%#{query[:keywords]}%")
+            items = items.where("zh_name ILIKE ? OR en_name ILIKE ? OR email ILIKE ? OR user_name ILIKE ? ","%#{query[:keywords]}%","%#{query[:keywords]}%","%#{query[:keywords]}%","%#{query[:keywords]}%")
         end
         items = items.order(query[:order] => query[:sort])
         render json: {
