@@ -1,17 +1,11 @@
-class SecurityTransgression < StandardError
-  def message
-    "user_access_deined"
-  end
-end
-
 class Api::V1::ApplicationController < ApplicationController 
   include ActionController::Cookies
+  
 
   rescue_from SecurityTransgression do |e|
     render json: { message: e.message, error: e.message }, status: :unauthorized
   end
-  
-  
+
   def user_authorize_request
 
     token = session[:user_token]
@@ -33,5 +27,9 @@ class Api::V1::ApplicationController < ApplicationController
     rescue JWT::DecodeError => e
       render json: { message: e.message, error: e.message }, status: :unauthorized
     end
+  end
+
+  def current_user 
+    @current_user
   end
 end

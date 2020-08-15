@@ -2,6 +2,7 @@ require 'openssl'
 require 'base64'
 class Member < ApplicationRecord
     has_secure_password
+    has_paper_trail
 
     has_many :registrations
 

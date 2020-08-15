@@ -1,9 +1,9 @@
 require 'openssl'
 require 'base64'
 class Registration < ApplicationRecord
+  has_paper_trail
+  
   belongs_to :member, optional: true
-
-  has_one :registration_audit
 
   scope :active, -> { where(is_deleted: false) }
 
@@ -38,6 +38,8 @@ class Registration < ApplicationRecord
   validates :agreement, presence: { message: "field_error_required"}
   validates :agreement, acceptance: { message: "field_error_true_only"}
 
+  validates :receipt_no, uniqueness:  { message: "field_error_unique"}, allow_nil: true, allow_blank: true
+
   # System
 
   # Status:
@@ -49,11 +51,7 @@ class Registration < ApplicationRecord
   # Completed - All step done
   # Cancelled - Cancelled by Admin / applier
   validates :status, presence: { message: "field_error_required"}
-  validates :status, inclusion: { in:["New","Completed","Withdraw","Cancelled"], message: "field_error_value_invalid"}
-
-  after_create do
-    self.registration_audit = RegistrationAudit.create
-  end
+  validates :status, inclusion: { in:["New","Completed","Withdraw","Cancelled"], message: "field_error_value_invalid"}  
 
   def can_be_created_by?(user)
     return true if user.user_group.access_rights.exists?(code: ["ALL_REQUEST","POST_REGISTRATION"])
@@ -97,7 +95,7 @@ class Registration < ApplicationRecord
 
   if Rails.env.production?
     has_attached_file :proof, 
-      styles: { thumb: "100x100>" }, 
+      # styles: { thumb: "100x100>" }, 
       :storage => :fog,
       fog_credentials: {
         google_storage_access_key_id: ENV.fetch('GOOGLE_STORAGE_ID'),
@@ -108,7 +106,7 @@ class Registration < ApplicationRecord
       :url => ENV["BASE_URL"]+"/uploads/registry/:uuid/:style/:filename"
   else
     has_attached_file :proof, 
-      styles: { thumb: "100x100>" }, 
+      # :styles => { thumb: "100x100>" }, 
       :path => ":rails_root/public/uploads/registry/:uuid/:style/:filename", 
       :url => ENV["BASE_URL"]+"/uploads/registry/:uuid/:style/:filename"
   end
@@ -119,6 +117,7 @@ class Registration < ApplicationRecord
     self.uuid = loop do
         random_token = SecureRandom.urlsafe_base64(10, false)
         break random_token unless self.class.exists?(uuid: random_token)
-    end
+    end 
   end
+  
 end

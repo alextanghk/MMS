@@ -21,12 +21,14 @@ import MomentUtils from "@date-io/moment";
 import moment from 'moment';
 import FileUpload from '../../components/FileUpload';
 import FormItemContainer  from '../../components/FormItemContainer';
+import MemberSelector from '../../components/MemberSelector';
 
 class EditRegistration extends Component {
     constructor(props) {
         super(props);
         this.state = {
             content: {
+                member_ref:"",
                 zh_surname:"",
                 en_surname:"",
                 zh_first_name:"",
@@ -88,14 +90,11 @@ class EditRegistration extends Component {
                             ...prevState.content,
                             ..._.reduce(result.data,(r,v,k)=>{
                                 switch(k) {
+                                    case "member":
+                                        r["member_ref"] = _.get(v,"member_ref","");
+                                        break;
                                     case "dob": r[k] = moment(v); break;
                                     case "proof": r[k] = _.get(v,"original",""); break;
-                                    case "audit":
-                                        r = {
-                                            ...r,
-                                            ...v
-                                        }
-                                        break;
                                     default: r[k]=v;break;
                                 }
                                 return r;
@@ -1031,7 +1030,21 @@ class EditRegistration extends Component {
                                         </FormItemContainer>
                                     </Grid>
                                     
-                                    <Grid item md={5} xs={11} spacing={1}></Grid>
+                                    <Grid item md={5} xs={11} spacing={1}>
+                                        <FormItemContainer
+                                            label={ `${t('input_member_ref')}:` }
+                                        >
+                                            <MemberSelector
+                                                name="member_ref"
+                                                filter={ _.get(content,"email","")}
+                                                disabled={content.status != "New"}
+                                                error={ errors.member_ref }
+                                                value={ _.get(content,"member_ref","")}
+                                                onChange={this.handleOnChange}
+                                                className="form-input"
+                                            />
+                                        </FormItemContainer>
+                                    </Grid>
                                     <Grid item md={5} xs={11} spacing={1}>
                                         <FormItemContainer
                                             required={content.paid}

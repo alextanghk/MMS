@@ -102,15 +102,17 @@ const Registrations = props => {
                             />
                         </Grid>
                         <Grid item xs={6}>
-                            <Button
-                                startIcon={<AddIcon />}
-                                color="primary"
-                                variant="contained"
-                                className="float-right"
-                                href="/registrations/create"
-                            >
-                                {t('btn_new')}
-                            </Button>
+                            {
+                                global.Accessible("POST_REGISTRATION") && <Button
+                                    startIcon={<AddIcon />}
+                                    color="primary"
+                                    variant="contained"
+                                    className="float-right"
+                                    href="/registrations/create"
+                                >
+                                    {t('btn_new')}
+                                </Button>
+                            }
                         </Grid>
                         <Grid xs={12} className="list-table-container">
                             <DataTable

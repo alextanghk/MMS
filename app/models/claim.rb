@@ -1,5 +1,6 @@
 class Claim < ApplicationRecord
-
+    has_paper_trail
+    
     belongs_to :claim_transaction, class_name: 'Transaction', optional: true
 
     scope :active, -> { where(is_deleted: false) }

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_22_163314) do
+ActiveRecord::Schema.define(version: 2020_08_15_134022) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -132,23 +132,6 @@ ActiveRecord::Schema.define(version: 2020_03_22_163314) do
     t.index ["zh_surname"], name: "index_members_on_zh_surname"
   end
 
-  create_table "registration_audits", force: :cascade do |t|
-    t.bigint "registration_id", null: false
-    t.string "payment_method"
-    t.boolean "paid", default: false
-    t.datetime "paid_at"
-    t.string "receipt_no"
-    t.boolean "sent_confirmation", default: false
-    t.boolean "sent_payment_note", default: false
-    t.boolean "sent_receipt", default: false
-    t.boolean "is_deleted", default: false
-    t.string "created_by"
-    t.string "updated_by"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["registration_id"], name: "index_registration_audits_on_registration_id"
-  end
-
   create_table "registrations", force: :cascade do |t|
     t.bigint "member_id"
     t.string "zh_surname", null: false
@@ -165,9 +148,6 @@ ActiveRecord::Schema.define(version: 2020_03_22_163314) do
     t.string "home_address"
     t.boolean "declare", default: false
     t.boolean "agreement", default: false
-    t.string "status", default: "New"
-    t.boolean "is_valid", default: false
-    t.text "remark"
     t.string "uuid", limit: 50, null: false
     t.string "comnpany"
     t.string "department"
@@ -179,6 +159,16 @@ ActiveRecord::Schema.define(version: 2020_03_22_163314) do
     t.string "proof_content_type"
     t.bigint "proof_file_size"
     t.datetime "proof_updated_at"
+    t.string "payment_method"
+    t.boolean "paid", default: false
+    t.datetime "paid_at"
+    t.string "receipt_no"
+    t.boolean "sent_confirmation", default: false
+    t.boolean "sent_payment_note", default: false
+    t.boolean "sent_receipt", default: false
+    t.string "status", default: "New"
+    t.boolean "is_valid", default: false
+    t.text "remark"
     t.boolean "is_deleted", default: false
     t.string "created_by"
     t.string "updated_by"
@@ -276,9 +266,19 @@ ActiveRecord::Schema.define(version: 2020_03_22_163314) do
     t.index ["zh_name"], name: "index_users_on_zh_name"
   end
 
+  create_table "versions", force: :cascade do |t|
+    t.string "item_type", null: false
+    t.bigint "item_id", null: false
+    t.string "event", null: false
+    t.string "whodunnit"
+    t.text "object"
+    t.datetime "created_at"
+    t.text "object_changes"
+    t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
+  end
+
   add_foreign_key "group_accesses", "access_rights"
   add_foreign_key "group_accesses", "user_groups"
-  add_foreign_key "registration_audits", "registrations"
   add_foreign_key "registrations", "members"
   add_foreign_key "transactions", "accounts"
   add_foreign_key "user_tokens", "users"

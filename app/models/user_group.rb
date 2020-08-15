@@ -1,6 +1,8 @@
 require 'openssl'
 require 'base64'
 class UserGroup < ApplicationRecord
+    has_paper_trail
+    
     has_many :group_accesses
     has_many :access_rights, through: :group_accesses
     

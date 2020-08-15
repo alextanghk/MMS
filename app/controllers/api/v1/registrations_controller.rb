@@ -2,7 +2,7 @@ require 'openssl'
 require 'base64'
 
 class Api::V1::RegistrationsController < Api::V1::ApplicationController
-    before_action :user_authorize_request
+    before_action :user_authorize_request, :set_paper_trail_whodunnit
     def list
         raise SecurityTransgression unless @current_user.can_do?("GET_REGISTRATION")
 
@@ -25,7 +25,7 @@ class Api::V1::RegistrationsController < Api::V1::ApplicationController
                 item
             }
         }
-    rescue ActiveRecord::SecurityTransgression => e
+    rescue SecurityTransgression => e
         render json: { message: "user_access_deined", error: "user_access_deined" }, status: :forbidden
     rescue => e
         render json: { message: "system_error", error: e.message }, status: :internal_server_error
@@ -43,7 +43,7 @@ class Api::V1::RegistrationsController < Api::V1::ApplicationController
         }
     rescue ActiveRecord::RecordNotFound => e
         render json: { message: "data_not_found", error: "data_not_found" }, status: :not_found
-    rescue ActiveRecord::SecurityTransgression => e
+    rescue SecurityTransgression => e
         render json: { message: "user_access_deined", error: "user_access_deined" }, status: :forbidden
     rescue => e
         render json: { message: "system_error", error: e.message }, status: :internal_server_error
@@ -76,7 +76,7 @@ class Api::V1::RegistrationsController < Api::V1::ApplicationController
             error: nil,
             data: ReturnFormat(item)
         }
-    rescue ActiveRecord::SecurityTransgression => e
+    rescue SecurityTransgression => e
         render json: { message: "user_access_deined", error: "user_access_deined" }, status: :forbidden
     rescue => e
         p e
@@ -91,13 +91,23 @@ class Api::V1::RegistrationsController < Api::V1::ApplicationController
                 :declare, :agreement,
                 :comnpany, :department, :job_title,
                 :employment_terms, :office_address, :office_phone,
-                :proof, :remark
+                :proof, :remark,:receipt_no, :payment_method, :paid, :paid_at, 
+                :sent_confirmation,
+                :sent_payment_note, :sent_receipt, :sent_group_invite
             )
-        audit = params.permit(
-            :receipt_no, :payment_method, :paid, :paid_at, :sent_confirmation,
-            :sent_payment_note, :sent_receipt, :sent_group_invite
-        )
+        
         item = Registration.new(form)
+        item.created_by = @current_user.id
+        item.updated_by = @current_user.id
+        mdata = params.permit(
+            :member_ref
+        )
+
+        if mdata[:member_ref].present? && Member.exists?(member_ref: mdata[:member_ref]) 
+            item.member = Member.find_by(member_ref: mdata[:member_ref])
+        end
+
+
         raise SecurityTransgression unless @current_user.can_create?(item)
         if !item.valid?
             render status:500, json: {
@@ -107,27 +117,13 @@ class Api::V1::RegistrationsController < Api::V1::ApplicationController
             }
             return
         end
-        
         item.save
-
-        item.registration_audit.assign_attributes(audit)
-        if !item.registration_audit.valid?
-            render status:500, json: {
-                message: "invalid",
-                error: item.registration_audit.errors.messages,
-                data: nil
-            }
-            return
-        end
-
-        item.registration_audit.save
-        
         render json: {
             message: "success",
             error: nil,
             data: ReturnFormat(item)
         }
-    rescue ActiveRecord::SecurityTransgression => e
+    rescue SecurityTransgression => e
         render json: { message: "user_access_deined", error: "user_access_deined" }, status: :forbidden
     rescue => e
         p e
@@ -148,12 +144,10 @@ class Api::V1::RegistrationsController < Api::V1::ApplicationController
                 :email, :gender, :mobile,
                 :yob, :dob, :home_phone, :home_address,
                 :comnpany, :department, :job_title,
-                :employment_terms, :office_address, :office_phone, :proof, :remark
+                :employment_terms, :office_address, :office_phone, :proof, :remark,
+                :receipt_no, :payment_method, :paid, :paid_at, :sent_confirmation,
+                :sent_payment_note, :sent_receipt, :sent_group_invite
             )
-        audit = params.permit(
-            :receipt_no, :payment_method, :paid, :paid_at, :sent_confirmation,
-            :sent_payment_note, :sent_receipt, :sent_group_invite
-        )
         item.assign_attributes(form)
 
         setting = params.permit(:delete_proof)
@@ -163,6 +157,14 @@ class Api::V1::RegistrationsController < Api::V1::ApplicationController
             item.proof.clear
         end
 
+        mdata = params.permit(
+            :member_ref
+        )
+        if Member.exists?(member_ref: mdata[:member_ref]) 
+            item.member = Member.find_by(member_ref: mdata[:member_ref])
+        end
+        
+        item.updated_by = @current_user.id
         if !item.valid?
             render status:500, json: {
                 message: "invalid",
@@ -171,18 +173,6 @@ class Api::V1::RegistrationsController < Api::V1::ApplicationController
             }
             return
         end
-
-        item.registration_audit.assign_attributes(audit)
-        if !item.registration_audit.valid?
-            render status:500, json: {
-                message: "invalid",
-                error: item.registration_audit.errors.messages,
-                data: nil
-            }
-            return
-        end
-
-        item.registration_audit.save
         item.save
 
         render json: {
@@ -193,7 +183,7 @@ class Api::V1::RegistrationsController < Api::V1::ApplicationController
         
     rescue ActiveRecord::RecordNotFound => e
         render json: { message: "data_not_found", error: "data_not_found" }, status: :not_found
-    rescue ActiveRecord::SecurityTransgression => e
+    rescue SecurityTransgression => e
         render json: { message: "user_access_deined", error: "user_access_deined" }, status: :forbidden
     rescue => e
         render json: { message: "system_error", error: e.message }, status: :internal_server_error
@@ -213,7 +203,7 @@ class Api::V1::RegistrationsController < Api::V1::ApplicationController
         }
     rescue ActiveRecord::RecordNotFound => e
         render json: { message: "data_not_found", error: "data_not_found" }, status: :not_found
-    rescue ActiveRecord::SecurityTransgression => e
+    rescue SecurityTransgression => e
         render json: { message: "user_access_deined", error: "user_access_deined" }, status: :forbidden
     rescue => e
         render json: { message: "system_error", error: e.message }, status: :internal_server_error
@@ -237,16 +227,16 @@ class Api::V1::RegistrationsController < Api::V1::ApplicationController
 
         tran = Transaction.new({
             :account => Account.find_by(:is_default => true),
-            :invoice_number => item.registration_audit.receipt_no,
+            :invoice_number => item.receipt_no,
             :item_name => "Membership fee",
             :item_type => "Membership fee",
-            :payment_method => item.registration_audit.payment_method,
+            :payment_method => item.payment_method,
             :approved_by => @current_user.en_name,
             :provider => "System",
             :approved_at => DateTime.now.strftime('%Y-%m-%d'),
             :amount => fee.content.to_i*-1,
             :is_approved => true,
-            :transaction_date => item.registration_audit.paid_at,
+            :transaction_date => item.paid_at,
             :description => "",
             :receipt => nil
         }) 
@@ -271,7 +261,7 @@ class Api::V1::RegistrationsController < Api::V1::ApplicationController
 
     rescue ActiveRecord::RecordNotFound => e
         render json: { message: "data_not_found", error: "data_not_found" }, status: :not_found
-    rescue ActiveRecord::SecurityTransgression => e
+    rescue SecurityTransgression => e
         p e.message
         render json: { message: "user_access_deined", error: "user_access_deined" }, status: :forbidden
     rescue => e
@@ -299,7 +289,7 @@ class Api::V1::RegistrationsController < Api::V1::ApplicationController
         }
     rescue ActiveRecord::RecordNotFound => e
         render json: { message: "data_not_found", error: "data_not_found" }, status: :not_found
-    rescue ActiveRecord::SecurityTransgression => e
+    rescue SecurityTransgression => e
         render json: { message: "user_access_deined", error: "user_access_deined" }, status: :forbidden
     rescue => e
         render json: { message: "system_error", error: e.message }, status: :internal_server_error
@@ -315,26 +305,37 @@ class Api::V1::RegistrationsController < Api::V1::ApplicationController
             return
         end
 
-        if !item.registration_audit.paid
+        if !item.paid
             render json: { message: "not_paid_yet" , error: "not_paid_yet" }, status: :internal_server_error
             return
         end
 
         fee = SystemConfig.find_by(code: "MEMBERSHIP_FEE")
         account = Account.find_by(:is_default => true)
-        
+        random_token = SecureRandom.urlsafe_base64(8, false)
+        item.status = "Completed"
+
+        if !item.valid?
+            render status:500, json: {
+                message: "invalid",
+                error: item.errors.messages,
+                data: nil
+            }
+            return
+        end
+
         tran = Transaction.new({
             :account => account,
-            :invoice_number => item.registration_audit.receipt_no,
+            :invoice_number => item.receipt_no,
             :item_name => "Membership fee",
             :item_type => "Membership fee",
-            :payment_method => item.registration_audit.payment_method,
+            :payment_method => item.payment_method,
             :approved_by => @current_user.en_name,
             :provider => "System",
             :approved_at => DateTime.now.strftime('%Y-%m-%d'),
             :amount => fee.content.to_i,
             :is_approved => true,
-            :transaction_date => item.registration_audit.paid_at,
+            :transaction_date => item.paid_at,
             :description => "",
             :receipt => nil
         }) 
@@ -346,74 +347,64 @@ class Api::V1::RegistrationsController < Api::V1::ApplicationController
             }
             return
         end
-        tran.save
         
-        random_token = SecureRandom.urlsafe_base64(8, false)
-        if Member.exists?(email: item.email) 
-            member = Member.find_by(email: item.email)
-            item.member = member
-        else
-            member = Member.new({
-                zh_surname: item.zh_surname,
-                en_surname: item.en_surname,
-                zh_first_name: item.zh_first_name,
-                en_first_name: item.en_first_name,
-                email: item.email,
-                mobile: item.mobile,
-                home_phone: item.home_phone,
-                home_address: item.home_address,
-                hkid: item.hkid,
-                yob: item.yob,
-                dob: item.dob,
-                gender: item.gender,
-                comnpany: item.comnpany,
-                department: item.department,
-                job_title: item.job_title,
-                employment_terms: item.employment_terms,
-                office_address: item.office_address,
-                office_phone: item.office_phone,
-                password: random_token,
-                is_actived: true,
-                password_confirmation: random_token
-            })
-            if !member.valid?
-                tran.destroy
-                render status:500, json: {
-                    message: "invalid",
-                    error: item.errors.messages,
-                    data: nil
-                }
-                return
+        if !item.member.present?
+            if Member.exists?(email: item.email) 
+                member = Member.find_by(email: item.email)
+                item.member = member
+            else
+                member = Member.new({
+                    zh_surname: item.zh_surname,
+                    en_surname: item.en_surname,
+                    zh_first_name: item.zh_first_name,
+                    en_first_name: item.en_first_name,
+                    email: item.email,
+                    mobile: item.mobile,
+                    home_phone: item.home_phone,
+                    home_address: item.home_address,
+                    hkid: item.hkid,
+                    yob: item.yob,
+                    dob: item.dob,
+                    gender: item.gender,
+                    comnpany: item.comnpany,
+                    department: item.department,
+                    job_title: item.job_title,
+                    employment_terms: item.employment_terms,
+                    office_address: item.office_address,
+                    office_phone: item.office_phone,
+                    password: random_token,
+                    is_actived: true,
+                    password_confirmation: random_token
+                })
+                if !member.valid?
+                    tran.destroy
+                    render status:500, json: {
+                        message: "invalid",
+                        error: item.errors.messages,
+                        data: nil
+                    }
+                    return
+                end
+                member.save
+                item.member = member
             end
-            member.save
-            item.member = member
+            if !item.valid?
+                member.destroy
+            end
         end
-
-        
-        
-        item.status = "Completed"
-        if !item.valid?
-            member.destroy
-            tran.destroy
-            render status:500, json: {
-                message: "invalid",
-                error: item.errors.messages,
-                data: nil
-            }
-            return
-        end
+        tran.save
         item.save
 
         render json: {
             message: "success",
             error: nil,
-            data: ReturnMemberFormat(member)
+            data: ReturnMemberFormat(item.member)
         }
         
 
     rescue ActiveRecord::RecordNotFound => e
         render json: { message: "data_not_found", error: "data_not_found" }, status: :not_found
-    rescue ActiveRecord::SecurityTransgression => e
+    rescue SecurityTransgression => e
         render json: { message: "user_access_deined", error: "user_access_deined" }, status: :forbidden
     rescue => e
         render json: { message: "system_error", error: e.message }, status: :internal_server_error
@@ -422,7 +413,6 @@ class Api::V1::RegistrationsController < Api::V1::ApplicationController
     private 
     
     def ReturnFormat(item)
-        
         result = item.attributes.except(
             'is_deleted','member_id','proof_file_name','proof_content_type','proof_file_size','uuid'
         )
@@ -430,15 +420,14 @@ class Api::V1::RegistrationsController < Api::V1::ApplicationController
             result[:proof] = nil
         else
             result[:proof] = {
-                :original => item.proof.url(:original),
-                :thumb => item.proof.url(:thumb)
+                :url => item.proof.url(:original),
+                :filename => item.proof_file_name,
+                :filesize => item.proof_file_size
             }
         end
         
         result[:member] = item.member
-        result[:audit] = item.registration_audit.attributes.except(
-            'id','registration_id','is_deleted'
-        )
+        
         result
     end
 

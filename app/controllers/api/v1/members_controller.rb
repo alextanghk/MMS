@@ -1,5 +1,5 @@
 class Api::V1::MembersController < Api::V1::ApplicationController
-    before_action :user_authorize_request
+    before_action :user_authorize_request, :set_paper_trail_whodunnit
     def list
         raise SecurityTransgression unless @current_user.can_do?("GET_MEMBER")
 
@@ -10,9 +10,16 @@ class Api::V1::MembersController < Api::V1::ApplicationController
         items = Member.active
 
         if query[:keywords].present?
-            items = items.where("zh_surname ILIKE ? OR en_surname ILIKE ? OR zh_first_name ILIKE ? OR en_first_name ILIKE ?","%#{query[:keywords]}%", "%#{query[:keywords]}%","%#{query[:keywords]}%", "%#{query[:keywords]}%")
+            items = items.where("zh_surname ILIKE :keywords OR en_surname ILIKE :keywords OR zh_first_name ILIKE :keywords OR en_first_name ILIKE :keywords OR email ILIKE :keywords",keywords: "%#{query[:keywords]}%")
         end
+
         items = items.order(query[:order] => query[:sort])
+        if items == nil 
+            render json: {
+                message: "error",
+                error: nil
+            }
+        end
         render json: {
             message: "success",
             error: nil,
@@ -22,7 +29,7 @@ class Api::V1::MembersController < Api::V1::ApplicationController
                 item
             }
         }
-    rescue ActiveRecord::SecurityTransgression => e
+    rescue SecurityTransgression => e
         render json: { message: "user_access_deined", error: "user_access_deined" }, status: :forbidden
     rescue => e
         render json: { message: "system_error", error: e.message }, status: :internal_server_error
@@ -40,7 +47,7 @@ class Api::V1::MembersController < Api::V1::ApplicationController
         }
     rescue ActiveRecord::RecordNotFound => e
         render json: { message: "data_not_found", error: "data_not_found" }, status: :not_found
-    rescue ActiveRecord::SecurityTransgression => e
+    rescue SecurityTransgression => e
         render json: { message: "user_access_deined", error: "user_access_deined" }, status: :forbidden
     rescue => e
         render json: { message: "system_error", error: e.message }, status: :internal_server_error
@@ -75,7 +82,7 @@ class Api::V1::MembersController < Api::V1::ApplicationController
             error: nil,
             data: ReturnFormat(item)
         }
-    rescue ActiveRecord::SecurityTransgression => e
+    rescue SecurityTransgression => e
         render json: { message: "user_access_deined", error: "user_access_deined" }, status: :forbidden
     rescue => e
         render json: { message: "system_error", error: e.message }, status: :internal_server_error
@@ -123,7 +130,7 @@ class Api::V1::MembersController < Api::V1::ApplicationController
 
     rescue ActiveRecord::RecordNotFound => e
         render json: { message: "data_not_found", error: "data_not_found" }, status: :not_found
-    rescue ActiveRecord::SecurityTransgression => e
+    rescue SecurityTransgression => e
         render json: { message: "user_access_deined", error: "user_access_deined" }, status: :forbidden
     rescue => e
         render json: { message: "system_error", error: e.message }, status: :internal_server_error
@@ -143,7 +150,7 @@ class Api::V1::MembersController < Api::V1::ApplicationController
         }
     rescue ActiveRecord::RecordNotFound => e
         render json: { message: "data_not_found", error: "data_not_found" }, status: :not_found
-    rescue ActiveRecord::SecurityTransgression => e
+    rescue SecurityTransgression => e
         render json: { message: "user_access_deined", error: "user_access_deined" }, status: :forbidden
     rescue => e
         render json: { message: "system_error", error: e.message }, status: :internal_server_error

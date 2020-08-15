@@ -1,6 +1,8 @@
 require 'openssl'
 require 'base64'
 class User < ApplicationRecord
+    has_paper_trail
+    
     has_many :user_tokens
     belongs_to :user_group
     

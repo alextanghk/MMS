@@ -1,6 +1,6 @@
 class Api::V1::UserGroupsController < Api::V1::ApplicationController
 
-    before_action :user_authorize_request
+    before_action :user_authorize_request, :set_paper_trail_whodunnit
 
     def list
         raise SecurityTransgression unless @current_user.can_do?("GET_USER_GROUP")
@@ -22,7 +22,7 @@ class Api::V1::UserGroupsController < Api::V1::ApplicationController
                 item
             }
         }
-    rescue ActiveRecord::SecurityTransgression => e
+    rescue SecurityTransgression => e
         render json: { message: "user_access_deined", error: "user_access_deined" }, status: :forbidden
     rescue => e
         render json: { message: "system_error", error: e.message }, status: :internal_server_error
@@ -40,7 +40,7 @@ class Api::V1::UserGroupsController < Api::V1::ApplicationController
         }
     rescue ActiveRecord::RecordNotFound => e
         render json: { message: "data_not_found", error: "data_not_found" }, status: :not_found
-    rescue ActiveRecord::SecurityTransgression => e
+    rescue SecurityTransgression => e
         render json: { message: "user_access_deined", error: "user_access_deined" }, status: :forbidden
     rescue => e
         render json: { message: "system_error", error: e.message }, status: :internal_server_error
@@ -87,7 +87,7 @@ class Api::V1::UserGroupsController < Api::V1::ApplicationController
             error: nil,
             data: ReturnFormat(item)
         }
-    rescue ActiveRecord::SecurityTransgression => e
+    rescue SecurityTransgression => e
         render json: { message: "user_access_deined", error: "user_access_deined" }, status: :forbidden
     rescue => e
         render json: { message: "system_error", error: e.message }, status: :internal_server_error
@@ -139,7 +139,7 @@ class Api::V1::UserGroupsController < Api::V1::ApplicationController
         
     rescue ActiveRecord::RecordNotFound => e
         render json: { message: "data_not_found", error: "data_not_found" }, status: :not_found
-    rescue ActiveRecord::SecurityTransgression => e
+    rescue SecurityTransgression => e
         render json: { message: "user_access_deined", error: "user_access_deined" }, status: :forbidden
     rescue => e
         render json: { message: "system_error", error: e.message }, status: :internal_server_error
@@ -159,7 +159,7 @@ class Api::V1::UserGroupsController < Api::V1::ApplicationController
         }
     rescue ActiveRecord::RecordNotFound => e
         render json: { message: "data_not_found", error: "data_not_found" }, status: :not_found
-    rescue ActiveRecord::SecurityTransgression => e
+    rescue SecurityTransgression => e
         render json: { message: "user_access_deined", error: "user_access_deined" }, status: :forbidden
     rescue => e
         render json: { message: "system_error", error: e.message }, status: :internal_server_error

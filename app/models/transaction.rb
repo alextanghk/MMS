@@ -2,6 +2,8 @@ require 'openssl'
 require 'base64'
 
 class Transaction < ApplicationRecord
+  has_paper_trail
+  
   belongs_to :account
 
   scope :active, -> { where(is_deleted: false) }
